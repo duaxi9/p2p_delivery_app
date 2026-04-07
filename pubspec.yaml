@@ -1,21 +1,36 @@
 name: p2p_delivery_app
+description: LinkAir Express onboarding screen — 4 variants
 
-description: A new Flutter project.
+publish_to: 'none'
+
+version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
+  google_fonts: ^6.1.0
+  material_symbols_icons: ^4.0.0
+  iconsax: ^0.0.8
+  custom_clippers: ^2.0.0
 
-  cupertino_icons: ^1.0.2
-  google_fonts: ^8.0.2
-  material_symbols_icons: ^4.2928.1
-  my_app: ^1.0.0
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
+
+
 flutter:
   uses-material-design: true
+  
+    
