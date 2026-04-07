@@ -1,0 +1,3 @@
+class LogoWidget {
+  const LogoWidget();
+}
