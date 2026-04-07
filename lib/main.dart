@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:p2p_delivery_app/home_screen.dart';
+import 'package:p2p_delivery_app/screens/welcome_screens.dart';
 
 
 void main() {
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: const Color(0xFFB8960A),
       ),
-      home: const HomeScreen(),
+      home: const WelcomeScreens(),
     );
   }
 }
