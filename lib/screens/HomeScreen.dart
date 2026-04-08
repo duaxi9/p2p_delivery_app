@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:p2p_delivery_app/screens/traveler_page.dart';
+import 'package:p2p_delivery_app/screens/Profilepage.dart';
 import 'package:p2p_delivery_app/screens/messages.dart';
+import 'package:p2p_delivery_app/screens/traveler_page.dart';
 import 'package:p2p_delivery_app/screens/posting.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -13,95 +15,79 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFEDEDED),
       bottomNavigationBar: BottomNavigationBar(
-  type: BottomNavigationBarType.fixed,
-  selectedItemColor: const Color(0xFFB8960A),
-  unselectedItemColor: Colors.grey,
-  backgroundColor: Colors.white,
-  currentIndex: _selectedIndex,
-
-  onTap: (index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    if (index == 3) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => Messages()),
-      );
-    }
-  },
-
-  items: const [
-    BottomNavigationBarItem(
-      icon: Icon(Icons.home_outlined),
-      label: "Home",
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.search),
-      label: "Search",
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.list_alt_outlined),
-      label: "Orders",
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.chat_bubble_outline),
-      label: "Chats",
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.person_outline),
-      label: "Profile",
-    ),
-  ],
-),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _header(),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 19),
-                    const Text(
-                      "A C T I O N S",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF6F6A6A),
+        currentIndex: _selectedIndex,
+        onTap: (index) => setState(() => _selectedIndex = index),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFFB8960A),
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.white,
+        iconSize: 22,
+        selectedFontSize: 12,
+        unselectedFontSize: 11,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt_outlined), label: "Orders"),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: "Chats"),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "Profile"),
+        ],
+      ),
+      body: _selectedIndex == 0
+          ? SafeArea(
+              child: Column(
+                children: [
+                  _header(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 19),
+                        const Text(
+                            "ACTIONS",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black26,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _quickActions(context),
+                          const SizedBox(height: 24),
+                          _sectionTitle("ACCEPTED DELIVERIES"),
+                          _acceptedDeliveries(),
+                          const SizedBox(height: 14),
+                          _sectionTitle("ACTIVE DELIVERIES"),
+                          _activeDeliveries(),
+                          const SizedBox(height: 14),
+                          _sectionTitle("PAST DELIVERIES"),
+                          _pastDeliveries(),
+                          const SizedBox(height: 16),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    _quickActions(context),
-                    const SizedBox(height: 24),
-
-                    _sectionTitle("ACCEPTED DELIVERIES"),
-                    _acceptedDeliveries(),
-
-                    const SizedBox(height: 14),
-                    _sectionTitle("ACTIVE DELIVERIES"),
-                    _activeDeliveries(),
-
-                    const SizedBox(height: 14),
-                    _sectionTitle("PAST DELIVERIES"),
-                    _pastDeliveries(),
-
-                    const SizedBox(height: 16),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
+            )
+          : _selectedIndex == 1
+              ? const Scaffold(body: Center(child: Text("Search")))
+              : _selectedIndex == 2
+                  ? const Scaffold(body: Center(child: Text("Orders")))
+                  : _selectedIndex == 3
+    ? Messages()
+    
+    : ProfilePage(),
+  
+                      
     );
+    
   }
 
   Widget _header() {
@@ -131,7 +117,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
                     _LogoText(),
-                    SizedBox(height: 2),
+                  const SizedBox(height: 2),
+
+
                     Text(
                       '',
                       style: TextStyle(
@@ -163,10 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Container(
                         width: 11,
                         height: 11,
-                        decoration: const BoxDecoration(
-                          color: Colors.redAccent,
-                          shape: BoxShape.circle,
-                        ),
+                        
                       ),
                     ),
                   ],
@@ -174,19 +159,17 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 18),
-            const Text(
-              "Good morning 👋,",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
-              ),
+            Text(
+              "Good morning,",
+              style: GoogleFonts.manrope(
+                fontSize: 15, color: Colors.black38, fontWeight: FontWeight.w400),
             ),
             const SizedBox(height: 4),
-            const Text(
-              "Karim",
-              style: TextStyle(
+            Text(
+              "Karim Amir",
+              style: GoogleFonts.syne(
                 fontSize: 22,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w900,
                 color: Colors.black,
               ),
             ),
@@ -197,85 +180,73 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _quickActions(BuildContext context) {
-  return Row(
-    children: [
-      Expanded(
-        child: GestureDetector(
-          onTap: () {
-            print("Send Parcel tapped");
-
-            Navigator.push(
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const Posting(),
-              ),
-            );
-          },
-          child: Container(
-            height: 135,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFF0E0E0E),
-                  Color.fromARGB(255, 34, 34, 34),
-                ],
-              ),
+              MaterialPageRoute(builder: (_) => Posting()),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      // ignore: deprecated_member_use
-                      color: Colors.white.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(14),
+            child: Container(
+              height: 135,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF0E0E0E),
+                    Color.fromARGB(255, 34, 34, 34),
+                  ],
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        // ignore: deprecated_member_use
+                        color: Colors.white.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(
+                        Icons.inventory_2_outlined,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.inventory_2_outlined,
-                      color: Colors.white,
-                      size: 24,
+                    const SizedBox(height: 12),
+                    Text(
+                      "Send Parcel",
+                      style: GoogleFonts.manrope(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    "Send Parcel",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
+                    const SizedBox(height: 4),
+                    Text(
+                      "Ship with a traveler",
+                      style: GoogleFonts.manrope(color: Colors.white70, fontSize: 11),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "Ship with a traveler",
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 11,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
-      const SizedBox(width: 16),
-      Expanded(
-        child: GestureDetector(
-          onTap: () {
-            Navigator.push(
+        const SizedBox(width: 16),
+        Expanded(
+
+          child: GestureDetector(
+            onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const TravelerPage(),
-              ),
-            );
-          },
+              MaterialPageRoute(builder: (_) => TravelerPage()),
+            ),
           child: Container(
             height: 135,
             decoration: BoxDecoration(
@@ -295,28 +266,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.white.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Icon(
-                      Icons.flight,
-                      color: Colors.white,
-                      size: 24,
-                    ),
+                    child: const Icon(Icons.flight, color: Colors.white, size: 24),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     "I'm Traveling",
-                    style: TextStyle(
+                    style: GoogleFonts.manrope(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     "Earn by carrying parcels",
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 11,
-                    ),
+                    style: GoogleFonts.manrope(color: Colors.white70, fontSize: 11),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -324,10 +288,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-      ),
-    ],
-  );
-}
+        ),
+      ],
+    );
+  }
 
   Widget _sectionTitle(String title) {
     return Padding(
@@ -371,19 +335,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _activeDeliveries() {
-  return Column(
-    children: [
-      ActiveDeliveryCard(
-        initials: "SL",
-        avatarColor: Color(0xFF0EA5A4),
-        name: "Sofia Lopez",
-        route: "València → DXB · 3 kg",
-        price: "\$8/kg",
-        progress: 0.58,
-      ),
-    ],
-  );
-}
+    return Column(
+      children: [
+        ActiveDeliveryCard(
+          initials: "SL",
+          avatarColor: Color(0xFF0EA5A4),
+          name: "Sofia Lopez",
+          route: "València → DXB · 3 kg",
+          price: "\$8/kg",
+          progress: 0.58,
+        ),
+      ],
+    );
+  }
 
   Widget _pastDeliveries() {
     return const Column(
@@ -441,14 +405,8 @@ class _LogoText extends StatelessWidget {
               height: 1,
             ),
             children: const [
-              TextSpan(
-                text: 'Link',
-                style: TextStyle(color: Color(0xFF000000)),
-              ),
-              TextSpan(
-                text: 'Air',
-                style: TextStyle(color: Color(0xFFB8960A)),
-              ),
+              TextSpan(text: 'Link', style: TextStyle(color: Color(0xFF000000))),
+              TextSpan(text: 'Air', style: TextStyle(color: Color(0xFFB8960A))),
             ],
           ),
         ),
@@ -466,7 +424,6 @@ class _LogoText extends StatelessWidget {
     );
   }
 }
-
 
 class ActiveDeliveryCard extends StatelessWidget {
   final String initials;
@@ -490,15 +447,14 @@ class ActiveDeliveryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12), // 
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 255, 255, 255),
-        borderRadius: BorderRadius.circular(18), 
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-
           Container(
             width: 49,
             height: 49,
@@ -512,32 +468,25 @@ class ActiveDeliveryCard extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
-                  fontSize: 18, 
+                  fontSize: 18,
                 ),
               ),
             ),
           ),
-
           const SizedBox(width: 10),
-
-          // Middle content
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Name
                 Text(
                   name,
                   style: const TextStyle(
                     color: Color.fromARGB(255, 0, 0, 0),
                     fontWeight: FontWeight.w600,
-                    fontSize: 14, 
+                    fontSize: 14,
                   ),
                 ),
-
                 const SizedBox(height: 3),
-
-                // Route
                 Text(
                   route,
                   style: const TextStyle(
@@ -545,24 +494,19 @@ class ActiveDeliveryCard extends StatelessWidget {
                     fontSize: 12,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: LinearProgressIndicator(
                     value: progress,
-                    minHeight: 3, 
+                    minHeight: 3,
                     backgroundColor: const Color.fromARGB(255, 0, 0, 0),
                     valueColor: const AlwaysStoppedAnimation<Color>(
                       Color.fromARGB(255, 78, 159, 225),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 6),
-
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
@@ -595,19 +539,16 @@ class ActiveDeliveryCard extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(width: 8),
-
-
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 price,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontWeight: FontWeight.w700,
-                  fontSize: 13, 
+                  fontSize: 13,
                 ),
               ),
               const SizedBox(height: 4),
@@ -646,7 +587,7 @@ class LogoWidget extends StatelessWidget {
             ),
             children: const [
               TextSpan(text: 'Link', style: TextStyle(color: Color(0xFF000000))),
-              TextSpan(text: 'Air',  style: TextStyle(color: Color(0xFFB8960A))),
+              TextSpan(text: 'Air', style: TextStyle(color: Color(0xFFB8960A))),
             ],
           ),
         ),
@@ -686,7 +627,6 @@ class DeliveryCard extends StatelessWidget {
     required this.status,
     this.statusColor,
   });
-
 
   @override
   Widget build(BuildContext context) {
@@ -737,7 +677,7 @@ class DeliveryCard extends StatelessWidget {
                     if (rating != null) ...[
                       const SizedBox(width: 6),
                       Text(
-                        "⭐ ${rating!.toStringAsFixed(1)}",
+                        "⭐️ ${rating!.toStringAsFixed(1)}",
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -749,10 +689,7 @@ class DeliveryCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   details,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ],
             ),
@@ -763,10 +700,7 @@ class DeliveryCard extends StatelessWidget {
             children: [
               Text(
                 price,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
               ),
               const SizedBox(height: 4),
               Text(

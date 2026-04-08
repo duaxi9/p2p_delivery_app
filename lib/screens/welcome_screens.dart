@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:p2p_delivery_app/screens/signup.dart';
 // ignore: unused_import
 import 'package:p2p_delivery_app/screens/home_screen.dart';
+// ignore: duplicate_import
+import 'package:flutter/material.dart';
+import 'package:p2p_delivery_app/screens/login.dart';
 
 class WelcomeScreens extends StatelessWidget {
   const WelcomeScreens({super.key});
@@ -54,7 +57,6 @@ class WelcomeScreens extends StatelessWidget {
   }
 }
 
-/// ================= BOTTOM =================
 class BottomContent extends StatelessWidget {
   const BottomContent({super.key});
 
@@ -131,8 +133,6 @@ const SizedBox(height: 16),
             ),
 
             const SizedBox(height: 10),
-
-            /// SUBTITLE
             Text(
               "Connect with travelers and get items delivered safely across borders.",
               style: GoogleFonts.manrope(
@@ -143,14 +143,18 @@ const SizedBox(height: 16),
             ),
 
             const SizedBox(height: 32),
-
-        //Log in button
             SizedBox(
-  width: double.infinity,
-  height: 54,
-  child: ElevatedButton(
-       onPressed: () {
-    },
+             width: double.infinity,
+             height: 54,
+             child: ElevatedButton(
+             onPressed: () {
+              Navigator.push(
+                 context,
+                 MaterialPageRoute(
+                 builder: (context) => Login(),
+                   ),
+                 );
+             },
     style: ElevatedButton.styleFrom(
       backgroundColor: const Color(0xFFB8960A),
       foregroundColor: Colors.white,
@@ -170,8 +174,6 @@ const SizedBox(height: 16),
 ),
 
             const SizedBox(height: 18),
-
-            /// SIGN UP BUTTON
             SizedBox(
             width: double.infinity,
             height: 54,
