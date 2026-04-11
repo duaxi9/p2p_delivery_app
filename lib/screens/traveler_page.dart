@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:p2p_delivery_app/models/trip_model.dart';
 import 'package:p2p_delivery_app/screens/plan_trip.dart';
 import 'package:p2p_delivery_app/screens/share_trip_page.dart';
+
 
 class TravelerPage extends StatefulWidget {
   const TravelerPage({super.key});
@@ -53,20 +55,36 @@ class _TravelerPageState extends State<TravelerPage> {
 
   // ================= HEADER =================
   Widget _header(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back),
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
+      ),
+      const SizedBox(height: 10),
+      Text(
+        'Carry & Earn',
+        style: GoogleFonts.syne(
+          color: Color(0xFFB8960A),
+          fontSize: 26,
+          fontWeight: FontWeight.w900,
         ),
-        const Text(
-          "I'm Traveling",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 6),
+      Text(
+        'Carry parcels, earn money on every trip',
+        style: GoogleFonts.manrope(
+          color: Colors.black38,
+          fontWeight: FontWeight.w500,
+          fontSize: 15,
         ),
-      ],
-    );
-  }
-
+      ),
+      const SizedBox(height: 20),
+      Divider(color: Colors.black12, thickness: 1),
+    ],
+  );
+}
   // ================= PLAN TRIP =================
   Widget _buildPlanTripCard(BuildContext context) {
     return InkWell(
@@ -90,14 +108,19 @@ class _TravelerPageState extends State<TravelerPage> {
           color: const Color(0xFFF1E5CC),
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Row(
+        child: Row(
           children: [
             Icon(Icons.map, color: Color(0xFFC49A00)),
             SizedBox(width: 12),
             Expanded(
               child: Text(
                 "Plan trip",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: GoogleFonts.syne(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  
+                ),
               ),
             ),
             Icon(Icons.arrow_forward_ios, size: 16),
@@ -222,8 +245,18 @@ class _TravelerPageState extends State<TravelerPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Center(
-        child: Text("No trip yet"),
+      child: Center(
+        child:
+        Text('No trip yet',
+        style: GoogleFonts.syne(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  
+                )
+        
+        ),
+        
       ),
     );
   }
@@ -269,8 +302,16 @@ class _TravelerPageState extends State<TravelerPage> {
   }
 
   Widget _emptyParcelSection() {
-    return const Center(
-      child: Text("No parcel requests yet"),
+    return Center(
+      child: Text('No parcel requests yet',
+      style: GoogleFonts.syne(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  
+                )
+      
+      ),
     );
   }
 }

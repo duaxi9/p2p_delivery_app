@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 // ignore: unused_import
-import 'package:p2p_delivery_app/screens/HomeScreen.dart';
+import 'package:p2p_delivery_app/screens/home_screen.dart';
 import 'package:p2p_delivery_app/screens/welcome_screens.dart';
 import 'package:p2p_delivery_app/widgets/MytripsPage.dart';
 // ignore: duplicate_import

@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+// ignore: unused_import
 import 'package:p2p_delivery_app/screens/home_screen.dart';
+import 'package:p2p_delivery_app/screens/MatchSystem.dart';
 
 
 class Posting extends StatefulWidget {
@@ -73,7 +75,8 @@ class _PostingState extends State<Posting> {
     required Function(String?) onChanged,
   }) {
     return DropdownButtonFormField<String>(
-      initialValue: value,
+      // ignore: deprecated_member_use
+      value: value,
       hint: Text(
         hint,
         style: GoogleFonts.manrope(color: Colors.black38, fontSize: 15),
@@ -144,7 +147,7 @@ class _PostingState extends State<Posting> {
               ),
               const SizedBox(height: 6),
               Text(
-                'Connect with travelers heading your way',
+                'Ship With a Traveler, Anywhere & Anytime',
                 style: GoogleFonts.manrope(
                   color: Colors.black38,
                   fontWeight: FontWeight.w500,
@@ -478,7 +481,7 @@ const SizedBox(height: 10),
                 child: ElevatedButton(
 onPressed: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => HomeScreen()),
+        MaterialPageRoute(builder: (_) => MatchSystem()),
       ),                  style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.all(16),
                     backgroundColor: Color(0xFFB8960A),
