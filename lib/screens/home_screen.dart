@@ -6,6 +6,8 @@ import 'package:p2p_delivery_app/screens/messages.dart';
 import 'package:p2p_delivery_app/screens/traveler_page.dart';
 import 'package:p2p_delivery_app/screens/posting.dart';
 import 'package:p2p_delivery_app/screens/notifications_page.dart';
+import 'package:p2p_delivery_app/screens/orders_page.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -96,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
           : _selectedIndex == 1
               ? const Scaffold(body: Center(child: Text("Search")))
               : _selectedIndex == 2
-                  ? const Scaffold(body: Center(child: Text("Orders")))
+                ? OrdersPage()
                   : _selectedIndex == 3
                       ? Messages()
                       : ProfilePage(),

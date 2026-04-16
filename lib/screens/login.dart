@@ -2,27 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:p2p_delivery_app/screens/home_screen.dart';
+import 'package:p2p_delivery_app/components/square_tile.dart';
 import 'package:p2p_delivery_app/screens/signup.dart';
 import 'package:p2p_delivery_app/screens/ForgotPassword.dart';
-
-
-class SquareTile extends StatelessWidget {
-  final String imagePath;
-
-  const SquareTile({
-    super.key,
-    required this.imagePath,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.asset(
-      imagePath,
-      fit: BoxFit.contain,
-    );
-  }
-}
+import 'package:p2p_delivery_app/screens/home_screen.dart';
 
 
 
@@ -59,39 +42,49 @@ class _LoginScreenState extends State<Login> {
     );
   }
 
- bool isPasswordHidden = true;
- Widget buildPassword() {
-  return Container(
-    decoration: BoxDecoration(
-      color: const Color(0xFFEDEDEC),
-      borderRadius: BorderRadius.circular(15),
-      boxShadow: [
-        BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
-      ],
-    ),
-    height: 60,
-    child: TextField(
+
+
+bool isPasswordHidden = true;
+
+  Widget buildPassword() {
+    return Container(
+      alignment: Alignment.centerLeft,
+      decoration: BoxDecoration(
+        color: Color(0xFFEDEDEC),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+        ],
+      ),
+      height: 60,
+      child: TextField(
       obscureText: isPasswordHidden,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        prefixIcon: const Icon(Icons.lock),
+        style: GoogleFonts.manrope(color: Colors.black87, fontSize: 16),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.only(top: 14),
+          prefixIcon: const Icon(Symbols.lock),
         suffixIcon: IconButton(
           icon: Icon(
             isPasswordHidden
                 ? Icons.visibility_off
                 : Icons.visibility,
           ),
+
+
           onPressed: () {
             setState(() {
               isPasswordHidden = !isPasswordHidden;
             });
           },
         ),
-        hintText: 'Password',
+
+          hintText: 'Password',
+          hintStyle: GoogleFonts.manrope(color: Colors.black38, fontSize: 16),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget buildRememberAndForgot() {
     return Row(

@@ -1,259 +1,406 @@
 import 'package:flutter/material.dart';
-import 'package:p2p_delivery_app/screens/home_screen.dart';
-// ignore: unused_import
-import 'package:p2p_delivery_app/screens/home_screen.dart' hide HomeScreen;
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:p2p_delivery_app/screens/login.dart';
+import 'package:p2p_delivery_app/screens/privacy_policy.dart';
+import 'package:p2p_delivery_app/screens/terms_of_use.dart';
+
 
 class SignUp extends StatefulWidget {
-  const SignUp({super.key});
-
   @override
-  State<SignUp> createState() => _SignUpState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _SignUpState extends State<SignUp> {
-  final TextEditingController fullNameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class _SignUpScreenState extends State<SignUp> {
+  bool isRememberMe = false;
+  final TextEditingController _birthDateController = TextEditingController();
 
-  bool obscurePassword = true;
-  bool agreeToTerms = false;
-
-  @override
-  void dispose() {
-    fullNameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
+  Widget buildFirstLastName() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            alignment: Alignment.centerLeft,
+            decoration: BoxDecoration(
+              color: Color(0xFFEDEDEC),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+              ],
+            ),
+            height: 60,
+            child: TextField(
+              keyboardType: TextInputType.name,
+              style: GoogleFonts.manrope(color: Colors.black87, fontSize: 16),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14),
+                prefixIcon: Icon(Symbols.person, color: Color(0xFF000000)),
+                hintText: 'First Name',
+                hintStyle: GoogleFonts.manrope(color: Colors.black38, fontSize: 16),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: Container(
+            alignment: Alignment.centerLeft,
+            decoration: BoxDecoration(
+              color: Color(0xFFEDEDEC),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+              ],
+            ),
+            height: 60,
+            child: TextField(
+              obscureText: false,
+              keyboardType: TextInputType.name,
+              style: GoogleFonts.manrope(color: Colors.black87, fontSize: 16),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14),
+                prefixIcon: Icon(Symbols.person_outline, color: Color(0xFF000000)),
+                hintText: 'Last Name',
+                hintStyle: GoogleFonts.manrope(color: Colors.black38, fontSize: 16),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
+
+  Widget buildUsername() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Color(0xFFEDEDEC),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+            ],
+          ),
+          height: 60,
+          child: TextField(
+            obscureText: false,
+            style: GoogleFonts.manrope(color: Colors.black87, fontSize: 16),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(Symbols.person_edit, color: Color(0xFF000000)),
+              hintText: 'Username',
+              hintStyle: GoogleFonts.manrope(color: Colors.black38, fontSize: 16),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+
+  Widget buildBirthDay() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Color(0xFFEDEDEC),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+            ],
+          ),
+          height: 60,
+          child: TextField(
+            controller: _birthDateController,
+            readOnly: true,
+            onTap: () async {
+              DateTime? picked = await showDatePicker(
+                context: context,
+                initialDate: DateTime(2000),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: ColorScheme.light(
+                        primary: Color(0xFFB8960A),
+                        onPrimary: Colors.white,
+                        onSurface: Colors.black87,
+                      ),
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+              if (picked != null) {
+                setState(() {
+                  _birthDateController.text =
+                      "${picked.day.toString().padLeft(2, '0')}/"
+                      "${picked.month.toString().padLeft(2, '0')}/"
+                      "${picked.year}";
+                });
+              }
+            },
+            style: GoogleFonts.manrope(color: Colors.black87, fontSize: 16),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(Symbols.edit_calendar, color: Color(0xFF000000)),
+              hintText: 'Birth Date',
+              hintStyle: GoogleFonts.manrope(color: Colors.black38, fontSize: 16),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildEmail() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Color(0xFFEDEDEC),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+            ],
+          ),
+          height: 60,
+          child: TextField(
+            obscureText: false,
+            keyboardType: TextInputType.emailAddress,
+            style: GoogleFonts.manrope(color: Colors.black87, fontSize: 16),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(Symbols.email, color: Color(0xFF000000)),
+              hintText: 'Email',
+              hintStyle: GoogleFonts.manrope(color: Colors.black38, fontSize: 16),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildPhoneNumber() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Color(0xFFEDEDEC),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+            ],
+          ),
+          height: 60,
+          child: TextField(
+            obscureText: false,
+            keyboardType: TextInputType.phone,
+            style: GoogleFonts.manrope(color: Colors.black87, fontSize: 16),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(Symbols.call, color: Color(0xFF000000)),
+              hintText: 'Phone Number',
+              hintStyle: GoogleFonts.manrope(color: Colors.black38, fontSize: 16),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildPassword() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Color(0xFFEDEDEC),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+            ],
+          ),
+          height: 60,
+          child: TextField(
+            obscureText: true,
+            style: GoogleFonts.manrope(color: Colors.black87, fontSize: 16),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(Symbols.lock, color: Color(0xFF000000)),
+              suffixIcon: Icon(Symbols.visibility_off, color: Color(0xFF000000)),
+              hintText: 'Password',
+              hintStyle: GoogleFonts.manrope(color: Colors.black38, fontSize: 16),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildAgree() {
+    return SizedBox(
+      height: 20,
+      child: Row(
+        children: <Widget>[
+          Theme(
+            data: ThemeData(unselectedWidgetColor: Colors.black),
+            child: Checkbox(
+              value: isRememberMe,
+              checkColor: Colors.white,
+              activeColor: Colors.black,
+              onChanged: (value) {
+                setState(() {
+                  isRememberMe = value!;
+                });
+              },
+            ),
+          ),
+          Text(
+            'I agree to ',
+            style: GoogleFonts.manrope(
+              color: Colors.black38,
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+            ),
+          ),
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const PrivacyPolicyPage()),
+            ),
+            child: Text(
+              'Privacy Policy',
+              style: GoogleFonts.manrope(
+                color: Color(0xFFB8960A),
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+              ),
+            ),
+          ),
+          Text(
+            ' and ',
+            style: GoogleFonts.manrope(
+              color: Colors.black38,
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+            ),
+          ),
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const TermsOfUsePage()),
+            ),
+            child: Text(
+              'Terms of use',
+              style: GoogleFonts.manrope(
+                color: Color(0xFFB8960A),
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildLRegisterBtn() {
+  return Container(
+    padding: EdgeInsets.symmetric(vertical: 25),
+    width: double.infinity,
+    child: ElevatedButton(
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => Login()),
+      ),
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.all(15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        backgroundColor: Color(0xFFB8960A),
+        elevation: 5,
+      ),
+      child: Text(
+        'Create Account',
+        style: GoogleFonts.syne(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEDEDED),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFEDEDED),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text(
-          "Sign Up",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Create your account",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "Sign up to start sending parcels and traveling with LinkAir.",
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Color(0xFF7A7A7A),
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 28),
-
-              _buildLabel("Full name"),
-              const SizedBox(height: 8),
-              _buildTextField(
-                controller: fullNameController,
-                hintText: "Enter your full name",
-                icon: Icons.person_outline,
-              ),
-
-              const SizedBox(height: 18),
-
-              _buildLabel("Email"),
-              const SizedBox(height: 8),
-              _buildTextField(
-                controller: emailController,
-                hintText: "Enter your email",
-                icon: Icons.email_outlined,
-                keyboardType: TextInputType.emailAddress,
-              ),
-
-              const SizedBox(height: 18),
-
-              _buildLabel("Password"),
-              const SizedBox(height: 8),
-              _buildTextField(
-                controller: passwordController,
-                hintText: "Create a password",
-                icon: Icons.lock_outline,
-                obscureText: obscurePassword,
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      obscurePassword = !obscurePassword;
-                    });
-                  },
-                  icon: Icon(
-                    obscurePassword
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility_outlined,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 18),
-
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: GestureDetector(
+          child: Stack(
+            children: <Widget>[
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  children: [
-                    Checkbox(
-                      value: agreeToTerms,
-                      activeColor: const Color(0xFFB8960A),
-                      onChanged: (value) {
-                        setState(() {
-                          agreeToTerms = value ?? false;
-                        });
-                      },
-                    ),
-                    const Expanded(
-                      child: Text(
-                        "I agree to the Terms of Use and Privacy Policy",
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFF5F5F5F),
+                height: double.infinity,
+                width: double.infinity,
+                color: Color(0xFFF5F5F5),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 45),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Let\'s create your account',
+                        style: GoogleFonts.syne(
+                          color: Color(0xFFB8960A),
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 28),
-
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                 onPressed: () {
-  // Optional: show message
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text("Account created successfully"),
-    ),
-  );
-
-  // Navigate to Home
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (_) => const HomeScreen()),
-  );
-},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFB8960A),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: const Text(
-                    "Create Account",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
+                      SizedBox(height: 21),
+                      buildFirstLastName(),
+                      SizedBox(height: 15),
+                      buildUsername(),
+                      SizedBox(height: 15),
+                      buildBirthDay(),
+                      SizedBox(height: 15),
+                      buildEmail(),
+                      SizedBox(height: 15),
+                      buildPhoneNumber(),
+                      SizedBox(height: 15),
+                      buildPassword(),
+                      SizedBox(height: 20),
+                      buildAgree(),
+                      SizedBox(height: 5),
+                      buildLRegisterBtn(),
+                    ],
                   ),
                 ),
-              ),
-
-              const SizedBox(height: 18),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Already have an account? ",
-                    style: TextStyle(
-                      color: Color(0xFF7A7A7A),
-                      fontSize: 14,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      "Log In",
-                      style: TextStyle(
-                        color: Color(0xFFB8960A),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLabel(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: Colors.black,
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hintText,
-    required IconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    bool obscureText = false,
-    Widget? suffixIcon,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      obscureText: obscureText,
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.grey),
-        suffixIcon: suffixIcon,
-        hintText: hintText,
-        hintStyle: const TextStyle(color: Color(0xFFAAAAAA)),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 18,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
         ),
       ),
     );
