@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:p2p_delivery_app/screens/personal_information_page.dart';
+// ignore: unused_import
 import 'package:p2p_delivery_app/screens/welcome_screens.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -438,41 +439,6 @@ final List<String> languages = [
 
             const SizedBox(height: 28),
 
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => const WelcomeScreens(),
-                  ),
-                );
-              },
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 17),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD93025),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      // ignore: deprecated_member_use
-                      color: const Color(0xFFD93025).withOpacity(0.22),
-                      blurRadius: 16,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    'Logout',
-                    style: GoogleFonts.syne(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
