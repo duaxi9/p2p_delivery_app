@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:p2p_delivery_app/screens/ChatPage.dart';
 
 class TrackingPage extends StatelessWidget {
   final String orderId;
@@ -14,6 +15,14 @@ class TrackingPage extends StatelessWidget {
   final String eta;
   final double progress;
 
+  // ── Carrier chat params ──────────────────────
+  final String carrierInitials;
+  final Color carrierColor;
+  final double carrierRating;
+  final int carrierTrips;
+  final int carrierDeliveries;
+  final List<Map<String, dynamic>> carrierMessages;
+
   const TrackingPage({
     super.key,
     required this.orderId,
@@ -27,6 +36,12 @@ class TrackingPage extends StatelessWidget {
     required this.status,
     required this.eta,
     required this.progress,
+    this.carrierInitials = '',
+    this.carrierColor = const Color(0xFFB8960A),
+    this.carrierRating = 0.0,
+    this.carrierTrips = 0,
+    this.carrierDeliveries = 0,
+    this.carrierMessages = const [],
   });
 
   @override
@@ -41,7 +56,7 @@ class TrackingPage extends StatelessWidget {
           ),
           Expanded(
             flex: 6,
-            child: _buildBottomSheet(),
+            child: _buildBottomSheet(context),
           ),
         ],
       ),
@@ -52,15 +67,7 @@ class TrackingPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFF1D2732),
-            Color(0xFF233445),
-            Color(0xFF1C2835),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Color(0xFF1A2535),
       ),
       child: Stack(
         children: [
@@ -69,66 +76,34 @@ class TrackingPage extends StatelessWidget {
             size: const Size(double.infinity, double.infinity),
             painter: RealisticRoutePainter(),
           ),
-          const Positioned(
-            left: 34,
-            bottom: 52,
-            child: _OriginMarker(),
-          ),
-          const Positioned(
-            left: 150,
-            top: 132,
-            child: _ParcelPulse(),
-          ),
-          const Positioned(
-            left: 160,
-            top: 142,
-            child: _ParcelDot(),
-          ),
-          const Positioned(
-            right: 42,
-            top: 66,
-            child: _DestinationMarker(),
-          ),
-          Positioned(
-            left: 64,
-            bottom: 84,
-            child: _cityLabel(routeFrom),
-          ),
-          Positioned(
-            left: 122,
-            top: 112,
-            child: _cityLabel("Transit"),
-          ),
-          Positioned(
-            right: 24,
-            top: 98,
-            child: _cityLabel(routeTo),
-          ),
+          const Positioned(left: 34, bottom: 52, child: _OriginMarker()),
+          const Positioned(left: 148, top: 130, child: _ParcelDot()),
+          const Positioned(right: 42, top: 62, child: _DestinationMarker()),
+          Positioned(left: 22, bottom: 72, child: _cityLabel(routeFrom)),
+          Positioned(left: 118, top: 108, child: _cityLabel("Transit")),
+          Positioned(right: 18, top: 90, child: _cityLabel(routeTo)),
           Positioned(
             top: 18,
             left: 0,
             right: 0,
             child: Center(
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   // ignore: deprecated_member_use
-                  color: const Color(0xFF121212).withOpacity(0.92),
+                  color: const Color(0xFF0E1620).withOpacity(0.95),
                   borderRadius: BorderRadius.circular(22),
-                  border: Border.all(
-                    // ignore: deprecated_member_use
-                    color: Colors.white.withOpacity(0.05),
-                  ),
+                  // ignore: deprecated_member_use
+                  border: Border.all(color: Colors.white.withOpacity(0.08)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      width: 8,
-                      height: 8,
+                      width: 7,
+                      height: 7,
                       decoration: const BoxDecoration(
-                        color: Color(0xFFE24B4A),
+                        color: Color(0xFFB8960A),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -145,7 +120,7 @@ class TrackingPage extends StatelessWidget {
                     Text(
                       "· ETA $eta",
                       style: GoogleFonts.manrope(
-                        color: Colors.white70,
+                        color: Colors.white54,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -161,17 +136,19 @@ class TrackingPage extends StatelessWidget {
             child: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: Container(
-                width: 42,
-                height: 42,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   // ignore: deprecated_member_use
-                  color: Colors.black.withOpacity(0.22),
+                  color: const Color(0xFF0E1620).withOpacity(0.85),
                   borderRadius: BorderRadius.circular(12),
+                  // ignore: deprecated_member_use
+                  border: Border.all(color: Colors.white.withOpacity(0.08)),
                 ),
                 child: const Icon(
                   Icons.arrow_back_ios_new,
                   color: Colors.white,
-                  size: 18,
+                  size: 16,
                 ),
               ),
             ),
@@ -181,7 +158,7 @@ class TrackingPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomSheet() {
+  Widget _buildBottomSheet(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -231,37 +208,29 @@ class TrackingPage extends StatelessWidget {
                         Text(
                           orderId,
                           style: GoogleFonts.syne(
-                            fontSize: 18,
+                            fontSize: 17,
                             fontWeight: FontWeight.w800,
                             color: Colors.black,
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          "$parcelType · $weight",
-                          style: GoogleFonts.manrope(
-                            fontSize: 13,
-                            color: const Color(0xFF8A8A8A),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
                       ],
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
+                      horizontal: 10,
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
                       // ignore: deprecated_member_use
-                      color: const Color(0xFF1D9E75).withOpacity(0.12),
+                      color: const Color.fromARGB(255, 237, 187, 88).withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       status,
                       style: GoogleFonts.manrope(
-                        color: const Color(0xFF0F6E56),
+                        color: const Color(0xFFB8960A),
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                       ),
@@ -311,31 +280,6 @@ class TrackingPage extends StatelessWidget {
               routeTo: routeTo,
             ),
             const SizedBox(height: 22),
-            Row(
-              children: [
-                Expanded(
-                  child: _InfoCard(
-                    label: "Status",
-                    value: status,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _InfoCard(
-                    label: "Expected",
-                    value: eta,
-                    gold: true,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _InfoCard(
-                    label: "Price",
-                    value: price,
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 18),
             Container(
               width: double.infinity,
@@ -365,6 +309,8 @@ class TrackingPage extends StatelessWidget {
                   _detailRow("Type", parcelType),
                   const SizedBox(height: 10),
                   _detailRow("Weight", weight),
+                  const SizedBox(height: 10),
+                  _detailRow("Price", price),
                 ],
               ),
             ),
@@ -424,7 +370,28 @@ class TrackingPage extends StatelessWidget {
               width: double.infinity,
               height: 52,
               child: ElevatedButton(
-                onPressed: () {},
+                // ── Navigate to carrier's ChatPage ──
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChatPage(
+                      initials: carrierInitials.isNotEmpty
+                          ? carrierInitials
+                          : carrierName
+                              .split(' ')
+                              .map((e) => e.isNotEmpty ? e[0] : '')
+                              .take(2)
+                              .join()
+                              .toUpperCase(),
+                      color: carrierColor,
+                      name: carrierName,
+                      messages: carrierMessages,
+                      rating: carrierRating,
+                      trips: carrierTrips,
+                      deliveries: carrierDeliveries,
+                    ),
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1A1A1A),
                   shape: RoundedRectangleBorder(
@@ -501,123 +468,109 @@ class _MapBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-          left: -30,
-          top: 30,
-          child: Container(
-            width: 140,
-            height: 140,
-            decoration: BoxDecoration(
-              // ignore: deprecated_member_use
-              color: const Color(0xFF2A3948).withOpacity(0.35),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        Positioned(
-          right: -40,
-          bottom: 20,
-          child: Container(
-            width: 180,
-            height: 180,
-            decoration: BoxDecoration(
-              // ignore: deprecated_member_use
-              color: const Color(0xFF2A3948).withOpacity(0.25),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        Positioned(
-          top: 42,
-          left: -10,
-          right: 40,
-          child: Container(
-            height: 2,
-            // ignore: deprecated_member_use
-            color: const Color(0xFF34485B).withOpacity(0.65),
-          ),
-        ),
-        Positioned(
-          top: 92,
-          left: 20,
-          right: -20,
-          child: Container(
-            height: 2,
-            // ignore: deprecated_member_use
-            color: const Color(0xFF34485B).withOpacity(0.55),
-          ),
-        ),
-        Positioned(
-          top: 170,
-          left: -10,
-          right: 30,
-          child: Container(
-            height: 2,
-            // ignore: deprecated_member_use
-            color: const Color(0xFF34485B).withOpacity(0.55),
-          ),
-        ),
-        Positioned(
-          left: 72,
-          top: -10,
-          bottom: 0,
-          child: Container(
-            width: 2,
-            // ignore: deprecated_member_use
-            color: const Color(0xFF34485B).withOpacity(0.6),
-          ),
-        ),
-        Positioned(
-          left: 228,
-          top: 0,
-          bottom: -10,
-          child: Container(
-            width: 2,
-            // ignore: deprecated_member_use
-            color: const Color(0xFF34485B).withOpacity(0.45),
-          ),
-        ),
-        Positioned(
-          right: 78,
-          top: 0,
-          bottom: 10,
-          child: Container(
-            width: 2,
-            // ignore: deprecated_member_use
-            color: const Color(0xFF34485B).withOpacity(0.55),
-          ),
-        ),
-        Positioned(
-          top: 122,
-          left: -10,
-          right: -10,
-          child: Container(
-            height: 5,
-            decoration: BoxDecoration(
-              // ignore: deprecated_member_use
-              color: const Color(0xFF526B82).withOpacity(0.8),
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ),
-        Positioned(
-          left: 154,
-          top: -10,
-          bottom: -10,
-          child: Container(
-            width: 5,
-            decoration: BoxDecoration(
-              // ignore: deprecated_member_use
-              color: const Color(0xFF526B82).withOpacity(0.75),
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ),
-      ],
+    return CustomPaint(
+      painter: _MapGridPainter(),
     );
   }
+}
+
+class _MapGridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      Paint()..color = const Color(0xFF1A2535),
+    );
+
+    final blockPaint = Paint()
+      ..color = const Color(0xFF1F2D40)
+      ..style = PaintingStyle.fill;
+
+    final roadPaint = Paint()
+      ..color = const Color(0xFF243347)
+      ..style = PaintingStyle.fill;
+
+    final majorRoadPaint = Paint()
+      ..color = const Color(0xFF2C3E55)
+      ..style = PaintingStyle.fill;
+
+    final blocks = [
+      Rect.fromLTWH(0, 0, 60, 35),
+      Rect.fromLTWH(68, 0, 80, 35),
+      Rect.fromLTWH(156, 0, 55, 35),
+      Rect.fromLTWH(219, 0, 70, 35),
+      Rect.fromLTWH(297, 0, 60, 35),
+      Rect.fromLTWH(0, 43, 45, 50),
+      Rect.fromLTWH(53, 43, 90, 50),
+      Rect.fromLTWH(151, 43, 60, 50),
+      Rect.fromLTWH(219, 43, 50, 50),
+      Rect.fromLTWH(277, 43, 80, 50),
+      Rect.fromLTWH(0, 101, 70, 45),
+      Rect.fromLTWH(78, 101, 60, 45),
+      Rect.fromLTWH(146, 101, 75, 45),
+      Rect.fromLTWH(229, 101, 55, 45),
+      Rect.fromLTWH(292, 101, 65, 45),
+      Rect.fromLTWH(0, 154, 50, 55),
+      Rect.fromLTWH(58, 154, 85, 55),
+      Rect.fromLTWH(151, 154, 65, 55),
+      Rect.fromLTWH(224, 154, 75, 55),
+      Rect.fromLTWH(307, 154, 50, 55),
+      Rect.fromLTWH(10, 217, 60, 60),
+      Rect.fromLTWH(78, 217, 70, 60),
+      Rect.fromLTWH(156, 217, 55, 60),
+      Rect.fromLTWH(219, 217, 80, 60),
+      Rect.fromLTWH(307, 217, 50, 60),
+    ];
+
+    for (final block in blocks) {
+      final rRect = RRect.fromRectAndRadius(block, const Radius.circular(3));
+      canvas.drawRRect(rRect, blockPaint);
+    }
+
+    final hRoads = [
+      Rect.fromLTWH(0, 37, size.width, 4),
+      Rect.fromLTWH(0, 97, size.width, 4),
+      Rect.fromLTWH(0, 150, size.width, 4),
+      Rect.fromLTWH(0, 211, size.width, 4),
+    ];
+    for (final r in hRoads) {
+      canvas.drawRect(r, roadPaint);
+    }
+
+    final vRoads = [
+      Rect.fromLTWH(62, 0, 4, size.height),
+      Rect.fromLTWH(145, 0, 4, size.height),
+      Rect.fromLTWH(217, 0, 4, size.height),
+      Rect.fromLTWH(290, 0, 4, size.height),
+    ];
+    for (final r in vRoads) {
+      canvas.drawRect(r, roadPaint);
+    }
+
+    canvas.drawRect(Rect.fromLTWH(0, 118, size.width, 7), majorRoadPaint);
+    canvas.drawRect(Rect.fromLTWH(150, 0, 7, size.height), majorRoadPaint);
+
+    final waterPaint = Paint()..color = const Color(0xFF162030);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(-10, size.height - 60, 120, 80),
+        const Radius.circular(40),
+      ),
+      waterPaint,
+    );
+
+    final parkPaint = Paint()..color = const Color(0xFF1C3028);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.width - 90, 40, 100, 60),
+        const Radius.circular(6),
+      ),
+      parkPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _OriginMarker extends StatelessWidget {
@@ -625,21 +578,19 @@ class _OriginMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 14,
-      height: 14,
-      decoration: BoxDecoration(
-        color: const Color(0xFF1D9E75),
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2),
-        boxShadow: [
-          BoxShadow(
-            // ignore: deprecated_member_use
-            color: const Color(0xFF1D9E75).withOpacity(0.35),
-            blurRadius: 10,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 14,
+          height: 14,
+          decoration: BoxDecoration(
+            color: const Color(0xFF1D9E75),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 2.5),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -650,27 +601,27 @@ class _DestinationMarker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 20,
-          height: 20,
+          width: 28,
+          height: 28,
           decoration: BoxDecoration(
             color: const Color(0xFFE24B4A),
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 3),
-            boxShadow: [
-              BoxShadow(
-                // ignore: deprecated_member_use
-                color: const Color(0xFFE24B4A).withOpacity(0.35),
-                blurRadius: 10,
-              ),
-            ],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.white, width: 2),
           ),
+          child: const Icon(Icons.place, color: Colors.white, size: 16),
         ),
+        Container(width: 2, height: 8, color: const Color(0xFFE24B4A)),
         Container(
-          width: 2,
-          height: 9,
-          color: const Color(0xFFE24B4A),
+          width: 6,
+          height: 3,
+          decoration: BoxDecoration(
+            // ignore: deprecated_member_use
+            color: const Color(0xFFE24B4A).withOpacity(0.4),
+            borderRadius: BorderRadius.circular(3),
+          ),
         ),
       ],
     );
@@ -682,19 +633,37 @@ class _ParcelDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 22,
-      height: 22,
-      decoration: BoxDecoration(
-        color: const Color(0xFFB8960A),
-        borderRadius: BorderRadius.circular(7),
-        border: Border.all(color: Colors.white, width: 2.5),
-      ),
-      child: const Icon(
-        Icons.inventory_2,
-        size: 12,
-        color: Colors.white,
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: const Color(0xFFB8960A),
+            borderRadius: BorderRadius.circular(9),
+            border: Border.all(color: Colors.white, width: 2),
+            boxShadow: [
+              BoxShadow(
+                // ignore: deprecated_member_use
+                color: const Color(0xFFB8960A).withOpacity(0.35),
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: const Icon(Icons.inventory_2, size: 15, color: Colors.white),
+        ),
+        Container(width: 2, height: 6, color: const Color(0xFFB8960A)),
+        Container(
+          width: 5,
+          height: 3,
+          decoration: BoxDecoration(
+            // ignore: deprecated_member_use
+            color: const Color(0xFFB8960A).withOpacity(0.3),
+            borderRadius: BorderRadius.circular(3),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -873,6 +842,7 @@ class _StopLine extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _InfoCard extends StatelessWidget {
   final String label;
   final String value;
@@ -881,6 +851,7 @@ class _InfoCard extends StatelessWidget {
   const _InfoCard({
     required this.label,
     required this.value,
+    // ignore: unused_element_parameter
     this.gold = false,
   });
 
@@ -922,62 +893,58 @@ class _InfoCard extends StatelessWidget {
 class RealisticRoutePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final shadowPaint = Paint()
-      // ignore: deprecated_member_use
-      ..color = Colors.black.withOpacity(0.18)
-      ..strokeWidth = 8
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final dashedPaint = Paint()
-      ..color = const Color(0xFFB8960A)
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final activePaint = Paint()
-      ..color = const Color(0xFFB8960A)
-      ..strokeWidth = 4.2
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final glowPaint = Paint()
-      // ignore: deprecated_member_use
-      ..color = const Color(0xFFB8960A).withOpacity(0.18)
-      ..strokeWidth = 10
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
     final path = Path()
       ..moveTo(42, size.height - 54)
-      ..quadraticBezierTo(88, size.height - 88, 128, size.height - 100)
-      ..quadraticBezierTo(170, size.height - 112, 194, size.height - 126)
-      ..quadraticBezierTo(235, size.height - 150, size.width - 92, 84);
+      ..quadraticBezierTo(90, size.height - 90, 130, size.height - 102)
+      ..quadraticBezierTo(172, size.height - 116, 196, size.height - 130)
+      ..quadraticBezierTo(238, size.height - 155, size.width - 90, 80);
+
+    canvas.drawPath(
+      path,
+      Paint()
+        // ignore: deprecated_member_use
+        ..color = const Color(0xFFB8960A).withOpacity(0.12)
+        ..strokeWidth = 14
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round,
+    );
+
+    _drawDashed(
+      canvas,
+      path,
+      Paint()
+        // ignore: deprecated_member_use
+        ..color = const Color(0xFF8A7A5A).withOpacity(0.5)
+        ..strokeWidth = 2.5
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round,
+    );
 
     final activePath = Path()
       ..moveTo(42, size.height - 54)
-      ..quadraticBezierTo(88, size.height - 88, 128, size.height - 100)
-      ..quadraticBezierTo(170, size.height - 112, 194, size.height - 126);
+      ..quadraticBezierTo(90, size.height - 90, 130, size.height - 102)
+      ..quadraticBezierTo(172, size.height - 116, 196, size.height - 130);
 
-    canvas.drawPath(path, shadowPaint);
-    canvas.drawPath(path, glowPaint);
-    _drawDashedPath(canvas, path, dashedPaint);
-    canvas.drawPath(activePath, activePaint);
+    canvas.drawPath(
+      activePath,
+      Paint()
+        ..color = const Color(0xFFB8960A)
+        ..strokeWidth = 3.5
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round,
+    );
   }
 
-  void _drawDashedPath(Canvas canvas, Path path, Paint paint) {
-    const dashWidth = 9.0;
-    const dashSpace = 6.0;
-
+  void _drawDashed(Canvas canvas, Path path, Paint paint) {
+    const dashWidth = 8.0;
+    const dashSpace = 5.0;
     for (final metric in path.computeMetrics()) {
       double distance = 0;
       while (distance < metric.length) {
-        final nextDistance = distance + dashWidth;
-        final extractPath = metric.extractPath(
-          distance,
-          nextDistance.clamp(0, metric.length),
+        canvas.drawPath(
+          metric.extractPath(distance, distance + dashWidth),
+          paint,
         );
-        canvas.drawPath(extractPath, paint);
         distance += dashWidth + dashSpace;
       }
     }

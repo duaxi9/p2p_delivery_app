@@ -6,7 +6,7 @@ class RecentChats extends StatelessWidget {
   final List<Map<String, dynamic>> chats = [
     {
       'initials': 'YM',
-      'color': Colors.black,
+      'color': Color.fromARGB(255, 234, 138, 218),
       'name': 'Yacine Mansouri',
       'message': 'That works for me 👍',
       'time': '2m ago',

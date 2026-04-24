@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:p2p_delivery_app/screens/Notifications_page.dart';
+import 'package:p2p_delivery_app/screens/orders_page.dart';
+// ignore: unused_import
 import 'package:p2p_delivery_app/screens/Profilepage.dart';
 import 'package:p2p_delivery_app/screens/UserProfilePage.dart';
 import 'package:p2p_delivery_app/screens/messages.dart';
 import 'package:p2p_delivery_app/screens/traveler_page.dart';
 import 'package:p2p_delivery_app/screens/posting.dart';
-import 'package:p2p_delivery_app/screens/notifications_page.dart';
-import 'package:p2p_delivery_app/screens/orders_page.dart';
-
+import 'package:p2p_delivery_app/screens/Search.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final bool isDarkMode;
+  final ValueChanged<bool> onThemeChanged;
+  final ValueChanged<Locale> onLanguageChanged;
+  final String selectedLanguage;
+
+  const HomeScreen({
+    super.key,
+    required this.isDarkMode,
+    required this.onThemeChanged,
+    required this.onLanguageChanged,
+    required this.selectedLanguage,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -21,15 +34,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFEDEDED),
+      backgroundColor: scaffoldBg,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFFB8960A),
         unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         iconSize: 22,
         selectedFontSize: 12,
         unselectedFontSize: 11,
@@ -43,12 +59,12 @@ class _HomeScreenState extends State<HomeScreen> {
             label: "Search",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt_outlined),
+            icon: Icon(Iconsax.category),
             label: "Orders",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat_bubble_outline),
-            label: "Chats",
+            label: "Chat",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
@@ -68,12 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 19),
-                          const Text(
+                          Text(
                             "ACTIONS",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
-                              color: Colors.black26,
+                              color: isDark ? Colors.white38 : Colors.black26,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -96,22 +112,29 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             )
           : _selectedIndex == 1
-              ? const Scaffold(body: Center(child: Text("Search")))
+              ? const Search()
               : _selectedIndex == 2
-                ? OrdersPage()
+                  ? const OrdersPage()
                   : _selectedIndex == 3
                       ? Messages()
-                      : ProfilePage(),
-    );
-  }
+                      :  ProfilePage(
+                          isDarkMode: widget.isDarkMode,
+                         onThemeChanged: widget.onThemeChanged,
+                         onLanguageChanged: widget.onLanguageChanged,
+                         selectedLanguage: widget.selectedLanguage,
+                          ),
+                      );
+                   }
 
   Widget _header() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.all(14),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
           borderRadius: BorderRadius.circular(28),
           boxShadow: [
             BoxShadow(
@@ -128,9 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     _LogoText(),
                     SizedBox(height: 2),
                     Text(
@@ -168,18 +191,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    Positioned(
-                      right: 1,
-                      top: 1,
-                      child: Container(
-                        width: 11,
-                        height: 11,
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ],
@@ -189,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
               "Good morning,",
               style: GoogleFonts.manrope(
                 fontSize: 15,
-                color: Colors.black38,
+                color: isDark ? Colors.white54 : Colors.black38,
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -199,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: GoogleFonts.syne(
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
-                color: Colors.black,
+                color: isDark ? Colors.white : Colors.black,
               ),
             ),
           ],
@@ -209,102 +220,143 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _quickActions(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => Posting()),
+        GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const Posting()),
+          ),
+          child: Container(
+            height: 80,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE5E5E3),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 8,
+                  offset: Offset(0, 3),
+                )
+              ],
             ),
-            child: Container(
-              height: 110,
-              decoration: BoxDecoration(
-                color: const Color(0xFFE5E5E3),
-                borderRadius: BorderRadius.circular(28),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
                 children: [
                   Container(
-                    width: 46,
-                    height: 46,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFFEFEFEE),
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 195, 195, 191),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
                       Icons.inventory_2_outlined,
-                      color: Colors.black38,
+                      color: Colors.white,
                       size: 22,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Send Parcel",
-                    style: GoogleFonts.syne(
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                    ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Send Parcel",
+                        style: GoogleFonts.syne(
+                          color: Colors.black45,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(
+                        "Ship with a traveler",
+                        style: GoogleFonts.manrope(
+                          color: Colors.black54,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.black26,
+                    size: 16,
                   ),
                 ],
               ),
             ),
           ),
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => TravelerPage()),
+        const SizedBox(height: 12),
+        GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const TravelerPage()),
+          ),
+          child: Container(
+            height: 80,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color(0xFFB8960A),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  // ignore: deprecated_member_use
+                  color: const Color(0xFFB8960A).withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                )
+              ],
             ),
-            child: Container(
-              height: 110,
-              decoration: BoxDecoration(
-                color: const Color(0xFFB8960A),
-                borderRadius: BorderRadius.circular(28),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
                 children: [
                   Container(
-                    width: 46,
-                    height: 46,
+                    width: 44,
+                    height: 44,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
                       // ignore: deprecated_member_use
                       color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
                       Icons.flight,
                       color: Colors.white,
                       size: 22,
-                    ), 
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "I'm Traveling",
-                    style: GoogleFonts.syne(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
                     ),
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "I'm Traveling",
+                        style: GoogleFonts.syne(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(
+                        "Earn by carrying parcels",
+                        style: GoogleFonts.manrope(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.black26,
+                    size: 16,
                   ),
                 ],
               ),
@@ -316,12 +368,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _sectionTitle(String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Text(
         title,
-        style: const TextStyle(
-          color: Colors.grey,
+        style: TextStyle(
+          color: isDark ? Colors.white54 : Colors.grey,
           letterSpacing: 3,
           fontSize: 12,
         ),
@@ -438,7 +492,7 @@ class _HomeScreenState extends State<HomeScreen> {
             avatarColor: Colors.red,
             name: "Daniel Costa",
             rating: 4.7,
-            details: "Germany → CDG · Mar 18 · 4 kg free",
+            details: "MAD → CDG · Mar 18 · 4 kg free",
             price: "\$8/kg",
             status: "2 days",
             statusColor: Colors.grey,
@@ -463,7 +517,7 @@ class _HomeScreenState extends State<HomeScreen> {
             avatarColor: Color(0xFF3467EB),
             name: "Douaa Kebaili",
             rating: 4.3,
-            details: "ALG → LHR · Mar 20 · 6 kg",
+            details: "ALG → LHR · Mar 20 · 6 kg free",
             price: "\$10/kg",
             status: "4 days",
             statusColor: Colors.grey,
@@ -488,7 +542,7 @@ class _HomeScreenState extends State<HomeScreen> {
             avatarColor: Color.fromARGB(255, 81, 80, 80),
             name: "Chloe Martin",
             rating: 4.7,
-            details: "Paris → Berlin · Mar 23 · 12 kg free",
+            details: "FAR → JFK · Mar 23 · 12 kg free",
             price: "\$21/kg",
             status: "7 days",
             statusColor: Colors.grey,
@@ -563,11 +617,13 @@ class ActiveDeliveryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 255, 255, 255),
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
@@ -599,7 +655,7 @@ class ActiveDeliveryCard extends StatelessWidget {
                 Text(
                   name,
                   style: GoogleFonts.syne(
-                    color: Colors.black,
+                    color: isDark ? Colors.white : Colors.black,
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                   ),
@@ -607,8 +663,10 @@ class ActiveDeliveryCard extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   route,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 144, 142, 142),
+                  style: TextStyle(
+                    color: isDark
+                        ? const Color(0xFFB0B0B0)
+                        : const Color.fromARGB(255, 144, 142, 142),
                     fontSize: 12,
                   ),
                 ),
@@ -625,9 +683,9 @@ class ActiveDeliveryCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
+                  children: [
                     Text(
                       "València",
                       style: TextStyle(
@@ -663,8 +721,8 @@ class ActiveDeliveryCard extends StatelessWidget {
             children: [
               Text(
                 price,
-                style: const TextStyle(
-                  color: Colors.black,
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
                   fontWeight: FontWeight.w700,
                   fontSize: 13,
                 ),
@@ -682,50 +740,6 @@ class ActiveDeliveryCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class LogoWidget extends StatelessWidget {
-  const LogoWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        RichText(
-          text: TextSpan(
-            style: GoogleFonts.syne(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1,
-              height: 1,
-            ),
-            children: const [
-              TextSpan(
-                text: 'Link',
-                style: TextStyle(color: Color(0xFF000000)),
-              ),
-              TextSpan(
-                text: 'Air',
-                style: TextStyle(color: Color(0xFFB8960A)),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          'EXPRESS DELIVERY',
-          style: GoogleFonts.manrope(
-            fontSize: 11,
-            letterSpacing: 3.5,
-            fontWeight: FontWeight.w500,
-            color: const Color(0xFFAAAAAA),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -754,11 +768,13 @@ class DeliveryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
@@ -792,7 +808,7 @@ class DeliveryCard extends StatelessWidget {
                       child: Text(
                         name,
                         style: GoogleFonts.syne(
-                          color: Colors.black,
+                          color: isDark ? Colors.white : Colors.black,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -803,9 +819,10 @@ class DeliveryCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         "⭐️ ${rating!.toStringAsFixed(1)}",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black,
                         ),
                       ),
                     ],
@@ -814,7 +831,10 @@ class DeliveryCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   details,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  style: TextStyle(
+                    color: isDark ? Colors.white54 : Colors.grey,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
@@ -825,9 +845,10 @@ class DeliveryCard extends StatelessWidget {
             children: [
               Text(
                 price,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
               ),
               const SizedBox(height: 4),

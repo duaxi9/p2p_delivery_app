@@ -218,7 +218,7 @@ bool isPasswordHidden = true;
     child: ElevatedButton(
       onPressed: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => HomeScreen()),
+        MaterialPageRoute(builder: (_) => HomeScreen(isDarkMode: false, onThemeChanged: (isDark) {}, onLanguageChanged: (Locale value) {  }, selectedLanguage: '',)),
       ),
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.all(15),
