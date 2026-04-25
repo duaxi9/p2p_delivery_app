@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:p2p_delivery_app/screens/ChatPage.dart';
+import 'package:my_app/screens/chat_page.dart';
 
 class TrackingPage extends StatelessWidget {
   final String orderId;

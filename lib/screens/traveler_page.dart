@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:p2p_delivery_app/models/trip_model.dart';
-import 'package:p2p_delivery_app/screens/plan_trip.dart';
-import 'package:p2p_delivery_app/screens/share_trip_page.dart';
+import 'package:my_app/models/trip_model.dart';
+import 'package:my_app/screens/plan_trip.dart';
+import 'package:my_app/screens/share_trip_page.dart';
 
 
 class TravelerPage extends StatefulWidget {

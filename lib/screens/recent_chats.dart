@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:p2p_delivery_app/screens/ChatPage.dart';
+import 'package:my_app/screens/chat_page.dart';
 
+// ignore: use_key_in_widget_constructors
 class RecentChats extends StatelessWidget {
   final List<Map<String, dynamic>> chats = [
     {
@@ -131,7 +132,7 @@ class RecentChats extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.only(top: 12, left: 13, right: 13),
-            child: Container(
+            child: SizedBox(
               height: 70,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,

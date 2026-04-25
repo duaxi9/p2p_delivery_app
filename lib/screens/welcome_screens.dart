@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:p2p_delivery_app/components/button.dart';
-import 'package:p2p_delivery_app/screens/Colors.dart';
+import 'package:my_app/components/button.dart';
+import 'package:my_app/screens/colors_page.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:p2p_delivery_app/screens/login.dart';
-import 'package:p2p_delivery_app/screens/signup.dart';
+import 'package:my_app/screens/login.dart';
+import 'package:my_app/screens/signup.dart';
 
 class WelcomeScreens extends StatelessWidget {
   const WelcomeScreens({super.key});
@@ -23,7 +23,7 @@ class WelcomeScreens extends StatelessWidget {
                   SizedBox(
                     height: 220,
                     width: double.maxFinite,
-                    child: const Align(
+                    child: Align(
                       alignment: Alignment.topLeft,
                       child: Padding(
                         padding: EdgeInsets.only(top: 50, left: 24),

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 
 class OtpForm extends StatelessWidget {
-  const OtpForm({Key? key}) : super(key: key);
+  const OtpForm({super.key});
 
   Widget _otpBox(BuildContext context, String savedKey) {
     return Container(
@@ -94,6 +94,7 @@ class OtpForm extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
+                // ignore: avoid_print
                 onPressed: () => print('OTP Submitted'),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.all(15),
@@ -118,6 +119,7 @@ class OtpForm extends StatelessWidget {
             // Resend
             Center(
               child: GestureDetector(
+                // ignore: avoid_print
                 onTap: () => print('Resend tapped'),
                 child: RichText(
                   text: TextSpan(

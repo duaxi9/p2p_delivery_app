@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:p2p_delivery_app/screens/Notifications_page.dart';
-import 'package:p2p_delivery_app/screens/orders_page.dart';
-// ignore: unused_import
-import 'package:p2p_delivery_app/screens/Profilepage.dart';
-import 'package:p2p_delivery_app/screens/UserProfilePage.dart';
-import 'package:p2p_delivery_app/screens/messages.dart';
-import 'package:p2p_delivery_app/screens/traveler_page.dart';
-import 'package:p2p_delivery_app/screens/posting.dart';
-import 'package:p2p_delivery_app/screens/Search.dart';
+import 'package:my_app/screens/Notifications_page.dart';
+import 'package:my_app/screens/orders_page.dart';
+import 'package:my_app/screens/profile_page.dart';
+import 'package:my_app/screens/user_profile_page.dart';
+import 'package:my_app/screens/messages.dart';
+import 'package:my_app/screens/traveler_page.dart';
+import 'package:my_app/screens/posting.dart';
+import 'package:my_app/screens/search_page.dart';
 
 class HomeScreen extends StatefulWidget {
-  final bool isDarkMode;
-  final ValueChanged<bool> onThemeChanged;
   final ValueChanged<Locale> onLanguageChanged;
   final String selectedLanguage;
 
   const HomeScreen({
     super.key,
-    required this.isDarkMode,
-    required this.onThemeChanged,
     required this.onLanguageChanged,
     required this.selectedLanguage,
   });
@@ -34,42 +29,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
-
     return Scaffold(
-      backgroundColor: scaffoldBg,
+      backgroundColor: const Color(0xFFF3F2EF),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFFB8960A),
         unselectedItemColor: Colors.grey,
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        backgroundColor: Colors.white,
         iconSize: 22,
         selectedFontSize: 12,
         unselectedFontSize: 11,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: "Search",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Iconsax.category),
-            label: "Orders",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline),
-            label: "Chat",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: "Profile",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+          BottomNavigationBarItem(icon: Icon(Iconsax.category), label: "Orders"),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: "Chat"),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "Profile"),
         ],
       ),
       body: _selectedIndex == 0
@@ -84,12 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 19),
-                          Text(
+                          const Text(
                             "ACTIONS",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
-                              color: isDark ? Colors.white38 : Colors.black26,
+                              color: Colors.black26,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -117,29 +94,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? const OrdersPage()
                   : _selectedIndex == 3
                       ? Messages()
-                      :  ProfilePage(
-                          isDarkMode: widget.isDarkMode,
-                         onThemeChanged: widget.onThemeChanged,
-                         onLanguageChanged: widget.onLanguageChanged,
-                         selectedLanguage: widget.selectedLanguage,
-                          ),
-                      );
-                   }
+                      : ProfilePage(
+                          onLanguageChanged: widget.onLanguageChanged,
+                          selectedLanguage: widget.selectedLanguage,
+                        ),
+    );
+  }
 
   Widget _header() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Padding(
       padding: const EdgeInsets.all(14),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(28),
           boxShadow: [
             BoxShadow(
-              // ignore: deprecated_member_use
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withAlpha(10),
               blurRadius: 18,
               offset: const Offset(0, 6),
             ),
@@ -166,32 +138,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const NotificationsPage(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFE0C13A),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.notifications_none,
-                          color: Colors.black,
-                          size: 24,
-                        ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationsPage(),
                       ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFE0C13A),
+                      shape: BoxShape.circle,
                     ),
-                  ],
+                    child: const Icon(
+                      Icons.notifications_none,
+                      color: Colors.black,
+                      size: 24,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -200,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
               "Good morning,",
               style: GoogleFonts.manrope(
                 fontSize: 15,
-                color: isDark ? Colors.white54 : Colors.black38,
+                color: Colors.black38,
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -210,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: GoogleFonts.syne(
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                color: Colors.black,
               ),
             ),
           ],
@@ -305,8 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  // ignore: deprecated_member_use
-                  color: const Color(0xFFB8960A).withOpacity(0.3),
+                  color: const Color(0xFFB8960A).withAlpha(77),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 )
@@ -320,8 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      // ignore: deprecated_member_use
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withAlpha(51),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -368,14 +333,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _sectionTitle(String title) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Text(
         title,
-        style: TextStyle(
-          color: isDark ? Colors.white54 : Colors.grey,
+        style: const TextStyle(
+          color: Colors.grey,
           letterSpacing: 3,
           fontSize: 12,
         ),
@@ -498,56 +461,6 @@ class _HomeScreenState extends State<HomeScreen> {
             statusColor: Colors.grey,
           ),
         ),
-        GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const UserProfilePage(
-                initials: 'DK',
-                color: Color(0xFF3467EB),
-                name: 'Douaa Kebaili',
-                rating: 4.3,
-                trips: 14,
-                deliveries: 30,
-              ),
-            ),
-          ),
-          child: const DeliveryCard(
-            initials: "DK",
-            avatarColor: Color(0xFF3467EB),
-            name: "Douaa Kebaili",
-            rating: 4.3,
-            details: "ALG → LHR · Mar 20 · 6 kg free",
-            price: "\$10/kg",
-            status: "4 days",
-            statusColor: Colors.grey,
-          ),
-        ),
-        GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const UserProfilePage(
-                initials: 'CM',
-                color: Color.fromARGB(255, 81, 80, 80),
-                name: 'Chloe Martin',
-                rating: 4.7,
-                trips: 27,
-                deliveries: 63,
-              ),
-            ),
-          ),
-          child: const DeliveryCard(
-            initials: "CM",
-            avatarColor: Color.fromARGB(255, 81, 80, 80),
-            name: "Chloe Martin",
-            rating: 4.7,
-            details: "FAR → JFK · Mar 23 · 12 kg free",
-            price: "\$21/kg",
-            status: "7 days",
-            statusColor: Colors.grey,
-          ),
-        ),
       ],
     );
   }
@@ -558,41 +471,25 @@ class _LogoText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        RichText(
-          text: TextSpan(
-            style: GoogleFonts.syne(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1,
-              height: 1,
-            ),
-            children: const [
-              TextSpan(
-                text: 'Link',
-                style: TextStyle(color: Color(0xFF000000)),
-              ),
-              TextSpan(
-                text: 'Air',
-                style: TextStyle(color: Color(0xFFB8960A)),
-              ),
-            ],
-          ),
+    return RichText(
+      text: TextSpan(
+        style: GoogleFonts.syne(
+          fontSize: 32,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -1,
+          height: 1,
         ),
-        const SizedBox(height: 5),
-        Text(
-          'EXPRESS DELIVERY',
-          style: GoogleFonts.manrope(
-            fontSize: 11,
-            letterSpacing: 3.5,
-            fontWeight: FontWeight.w500,
-            color: const Color(0xFFAAAAAA),
+        children: const [
+          TextSpan(
+            text: 'Link',
+            style: TextStyle(color: Color(0xFF000000)),
           ),
-        ),
-      ],
+          TextSpan(
+            text: 'Air',
+            style: TextStyle(color: Color(0xFFB8960A)),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -617,17 +514,14 @@ class ActiveDeliveryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             width: 49,
@@ -655,7 +549,7 @@ class ActiveDeliveryCard extends StatelessWidget {
                 Text(
                   name,
                   style: GoogleFonts.syne(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: Colors.black,
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                   ),
@@ -663,80 +557,34 @@ class ActiveDeliveryCard extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   route,
-                  style: TextStyle(
-                    color: isDark
-                        ? const Color(0xFFB0B0B0)
-                        : const Color.fromARGB(255, 144, 142, 142),
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 144, 142, 142),
                     fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 8),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: const LinearProgressIndicator(
-                    value: 0.58,
+                  child: LinearProgressIndicator(
+                    value: progress,
                     minHeight: 3,
-                    backgroundColor: Color.fromARGB(255, 0, 0, 0),
-                    valueColor: AlwaysStoppedAnimation<Color>(
+                    backgroundColor: Colors.black,
+                    valueColor: const AlwaysStoppedAnimation<Color>(
                       Color.fromARGB(255, 78, 159, 225),
                     ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "València",
-                      style: TextStyle(
-                        color: Color(0xFF408CE3),
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      "In transit",
-                      style: TextStyle(
-                        color: Color(0xFF408CE3),
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      "DXB",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 91, 90, 90),
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
           ),
           const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                price,
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                "On the way",
-                style: TextStyle(
-                  color: Color(0xFF408CE3),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11,
-                ),
-              ),
-            ],
+          Text(
+            price,
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
           ),
         ],
       ),
@@ -768,13 +616,11 @@ class DeliveryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
@@ -802,53 +648,34 @@ class DeliveryCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        name,
-                        style: GoogleFonts.syne(
-                          color: isDark ? Colors.white : Colors.black,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (rating != null) ...[
-                      const SizedBox(width: 6),
-                      Text(
-                        "⭐️ ${rating!.toStringAsFixed(1)}",
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ],
-                  ],
+                Text(
+                  name,
+                  style: GoogleFonts.syne(
+                    color: Colors.black,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   details,
-                  style: TextStyle(
-                    color: isDark ? Colors.white54 : Colors.grey,
+                  style: const TextStyle(
+                    color: Colors.grey,
                     fontSize: 12,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 price,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: Colors.black,
                 ),
               ),
               const SizedBox(height: 4),

@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.p2p_delivery_app"
+    namespace = "com.example.my_app"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.p2p_delivery_app"
+        applicationId = "com.example.my_app"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
         versionCode = 1

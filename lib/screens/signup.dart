@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:p2p_delivery_app/screens/login.dart';
-import 'package:p2p_delivery_app/screens/privacy_policy.dart';
-import 'package:p2p_delivery_app/screens/terms_of_use.dart';
+import 'package:my_app/screens/login.dart';
+import 'package:my_app/screens/privacy_policy.dart';
+import 'package:my_app/screens/terms_of_use.dart';
 
 
 class SignUp extends StatefulWidget {
+  const SignUp({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _SignUpScreenState createState() => _SignUpScreenState();
 }
 

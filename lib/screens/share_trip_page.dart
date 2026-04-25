@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:p2p_delivery_app/models/trip_model.dart';
+import 'package:my_app/models/trip_model.dart';
 
 class ShareTripPage extends StatelessWidget {
   final TripModel trip;

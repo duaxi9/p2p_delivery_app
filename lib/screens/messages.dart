@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:p2p_delivery_app/screens/active_chats.dart';
-import 'package:p2p_delivery_app/screens/recent_chats.dart';
+import 'package:my_app/screens/active_chats.dart';
+import 'package:my_app/screens/recent_chats.dart';
 
 class Messages extends StatelessWidget {
+  const Messages({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +52,7 @@ class Messages extends StatelessWidget {
                 Icon(Icons.search,
                 color: Colors.blueGrey,
                 ),
-                Container(
+                SizedBox(
                   
                   width: 300,
                   child: Padding(padding: EdgeInsets.symmetric(horizontal: 15),

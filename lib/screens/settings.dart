@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:p2p_delivery_app/screens/personal_information_page.dart';
-// ignore: unused_import
-import 'package:p2p_delivery_app/screens/welcome_screens.dart';
+import 'package:my_app/screens/personal_information_page.dart';
 
 class SettingsPage extends StatefulWidget {
-  final bool isDarkMode;
-  final ValueChanged<bool> onThemeChanged;
-
-  const SettingsPage({
-    super.key,
-    required this.isDarkMode,
-    required this.onThemeChanged,
-  });
+  const SettingsPage({super.key});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -31,44 +22,46 @@ class _SettingsPageState extends State<SettingsPage> {
 
   String selectedLanguage = 'English';
   String selectedCurrency = 'DZD – Algerian Dinar';
-final List<String> languages = [ 
-  'English',
-  'Arabic',
-  'French',
-  'Spanish',
-  'Portuguese',
-  'German',
-  'Italian',
-  'Dutch',
-  'Turkish',
-  'Russian',
-  'Ukrainian',
-  'Chinese (Simplified)',
-  'Chinese (Traditional)',
-  'Japanese',
-  'Korean',
-  'Hindi',
-  'Urdu',
-  'Bengali',
-  'Punjabi',
-  'Persian',
-  'Indonesian',
-  'Malay',
-  'Thai',
-  'Vietnamese',
-  'Filipino',
-  'Swahili',
-  'Hebrew',
-  'Greek',
-  'Polish',
-  'Romanian',
-  'Czech',
-  'Hungarian',
-  'Swedish',
-  'Norwegian',
-  'Danish',
-  'Finnish',
-];
+
+  final List<String> languages = [
+    'English',
+    'Arabic',
+    'French',
+    'Spanish',
+    'Portuguese',
+    'German',
+    'Italian',
+    'Dutch',
+    'Turkish',
+    'Russian',
+    'Ukrainian',
+    'Chinese (Simplified)',
+    'Chinese (Traditional)',
+    'Japanese',
+    'Korean',
+    'Hindi',
+    'Urdu',
+    'Bengali',
+    'Punjabi',
+    'Persian',
+    'Indonesian',
+    'Malay',
+    'Thai',
+    'Vietnamese',
+    'Filipino',
+    'Swahili',
+    'Hebrew',
+    'Greek',
+    'Polish',
+    'Romanian',
+    'Czech',
+    'Hungarian',
+    'Swedish',
+    'Norwegian',
+    'Danish',
+    'Finnish',
+  ];
+
   final List<String> currencies = [
     'DZD – Algerian Dinar',
     'USD – US Dollar',
@@ -77,9 +70,8 @@ final List<String> languages = [
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF0F0F10) : const Color(0xFFF3F2EF);
-    final cardColor = isDark ? const Color(0xFF1A1A1D) : Colors.white;
+    const bgColor = Color(0xFFF3F2EF);
+    const cardColor = Colors.white;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -87,13 +79,11 @@ final List<String> languages = [
         backgroundColor: bgColor,
         elevation: 0,
         centerTitle: false,
-        iconTheme: IconThemeData(
-          color: isDark ? Colors.white : Colors.black,
-        ),
+        iconTheme: const IconThemeData(color: Colors.black),
         title: Text(
           'Settings',
           style: GoogleFonts.syne(
-            color: isDark ? Colors.white : Colors.black,
+            color: Colors.black,
             fontSize: 24,
             fontWeight: FontWeight.w800,
           ),
@@ -104,13 +94,12 @@ final List<String> languages = [
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _sectionTitle('Account', isDark),
+            _sectionTitle('Account'),
             const SizedBox(height: 10),
             _menuCard(
               cardColor: cardColor,
               children: [
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.person_outline,
                   iconColor: const Color(0xFF3B82F6),
                   title: 'Personal Information',
@@ -124,9 +113,8 @@ final List<String> languages = [
                     );
                   },
                 ),
-                _divider(isDark),
+                _divider(),
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.lock_outline,
                   iconColor: const Color(0xFFA855F7),
                   title: 'Password & Security',
@@ -138,13 +126,12 @@ final List<String> languages = [
 
             const SizedBox(height: 24),
 
-            _sectionTitle('Language & Region', isDark),
+            _sectionTitle('Language & Region'),
             const SizedBox(height: 10),
             _menuCard(
               cardColor: cardColor,
               children: [
                 _dropdownTile(
-                  isDark: isDark,
                   icon: Icons.language_outlined,
                   iconColor: const Color(0xFF10B981),
                   title: 'Language',
@@ -157,9 +144,8 @@ final List<String> languages = [
                     }
                   },
                 ),
-                _divider(isDark),
+                _divider(),
                 _dropdownTile(
-                  isDark: isDark,
                   icon: Icons.monetization_on_outlined,
                   iconColor: const Color(0xFFF59E0B),
                   title: 'Currency',
@@ -172,9 +158,8 @@ final List<String> languages = [
                     }
                   },
                 ),
-                _divider(isDark),
+                _divider(),
                 _infoRow(
-                  isDark: isDark,
                   title: 'Time Zone',
                   value: 'GMT+1 · Algiers',
                 ),
@@ -183,31 +168,28 @@ final List<String> languages = [
 
             const SizedBox(height: 24),
 
-            _sectionTitle('Payment Methods', isDark),
+            _sectionTitle('Payment Methods'),
             const SizedBox(height: 10),
             _menuCard(
               cardColor: cardColor,
               children: [
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.credit_card_outlined,
                   iconColor: const Color(0xFF3B82F6),
                   title: 'Saved Cards',
                   subtitle: 'Manage your linked payment cards',
                   onTap: () => _showSnackBar('Saved Cards coming soon'),
                 ),
-                _divider(isDark),
+                _divider(),
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.account_balance_wallet_outlined,
                   iconColor: const Color(0xFF10B981),
                   title: 'Wallet Balance',
                   subtitle: 'View balance and top up your wallet',
                   onTap: () => _showSnackBar('Wallet coming soon'),
                 ),
-                _divider(isDark),
+                _divider(),
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.receipt_long_outlined,
                   iconColor: const Color(0xFFF59E0B),
                   title: 'Transaction History',
@@ -219,13 +201,12 @@ final List<String> languages = [
 
             const SizedBox(height: 24),
 
-            _sectionTitle('Preferences', isDark),
+            _sectionTitle('Preferences'),
             const SizedBox(height: 10),
             _menuCard(
               cardColor: cardColor,
               children: [
                 _premiumSwitchTile(
-                  isDark: isDark,
                   icon: Icons.notifications_none,
                   iconColor: const Color(0xFFF59E0B),
                   title: 'Push Notifications',
@@ -235,9 +216,8 @@ final List<String> languages = [
                     setState(() => pushNotifications = value);
                   },
                 ),
-                _divider(isDark),
+                _divider(),
                 _premiumSwitchTile(
-                  isDark: isDark,
                   icon: Icons.email_outlined,
                   iconColor: const Color(0xFF3B82F6),
                   title: 'Email Notifications',
@@ -247,28 +227,17 @@ final List<String> languages = [
                     setState(() => emailNotifications = value);
                   },
                 ),
-                _divider(isDark),
-                _premiumSwitchTile(
-                  isDark: isDark,
-                  icon: Icons.dark_mode_outlined,
-                  iconColor: const Color(0xFF64748B),
-                  title: 'Dark Mode',
-                  subtitle: 'Switch the app appearance instantly',
-                  value: widget.isDarkMode,
-                  onChanged: widget.onThemeChanged,
-                ),
               ],
             ),
 
             const SizedBox(height: 24),
 
-            _sectionTitle('Security', isDark),
+            _sectionTitle('Security'),
             const SizedBox(height: 10),
             _menuCard(
               cardColor: cardColor,
               children: [
                 _premiumSwitchTile(
-                  isDark: isDark,
                   icon: Icons.fingerprint,
                   iconColor: const Color(0xFFA855F7),
                   title: 'Biometric Login',
@@ -278,9 +247,8 @@ final List<String> languages = [
                     setState(() => biometricLogin = value);
                   },
                 ),
-                _divider(isDark),
+                _divider(),
                 _premiumSwitchTile(
-                  isDark: isDark,
                   icon: Icons.security,
                   iconColor: const Color(0xFF3B82F6),
                   title: 'Two-Factor Authentication',
@@ -307,13 +275,12 @@ final List<String> languages = [
 
             const SizedBox(height: 24),
 
-            _sectionTitle('Privacy & Data', isDark),
+            _sectionTitle('Privacy & Data'),
             const SizedBox(height: 10),
             _menuCard(
               cardColor: cardColor,
               children: [
                 _premiumSwitchTile(
-                  isDark: isDark,
                   icon: Icons.location_on_outlined,
                   iconColor: const Color(0xFF10B981),
                   title: 'Location Tracking',
@@ -323,9 +290,8 @@ final List<String> languages = [
                     setState(() => locationTracking = value);
                   },
                 ),
-                _divider(isDark),
+                _divider(),
                 _premiumSwitchTile(
-                  isDark: isDark,
                   icon: Icons.bar_chart_outlined,
                   iconColor: const Color(0xFFF59E0B),
                   title: 'Analytics & Diagnostics',
@@ -335,54 +301,49 @@ final List<String> languages = [
                     setState(() => dataSharingAnalytics = value);
                   },
                 ),
-                _divider(isDark),
+                _divider(),
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.shield_outlined,
                   iconColor: const Color(0xFFA855F7),
                   title: 'Privacy Policy',
                   subtitle: 'Read how we handle your personal data',
                   onTap: () => _showSnackBar('Opening Privacy Policy…'),
                 ),
-                _divider(isDark),
+                _divider(),
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.delete_outline,
                   iconColor: const Color(0xFFEF4444),
                   title: 'Delete My Account',
                   subtitle: 'Permanently remove your data from our servers',
-                  onTap: () => _showDeleteAccountDialog(isDark),
+                  onTap: _showDeleteAccountDialog,
                 ),
               ],
             ),
 
             const SizedBox(height: 24),
 
-            _sectionTitle('Help & Support', isDark),
+            _sectionTitle('Help & Support'),
             const SizedBox(height: 10),
             _menuCard(
               cardColor: cardColor,
               children: [
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.help_outline_rounded,
                   iconColor: const Color(0xFF3B82F6),
                   title: 'FAQ & Help Center',
                   subtitle: 'Find answers to common questions',
                   onTap: () => _showSnackBar('Opening Help Center…'),
                 ),
-                _divider(isDark),
+                _divider(),
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.chat_bubble_outline_rounded,
                   iconColor: const Color(0xFF10B981),
                   title: 'Contact Support',
                   subtitle: 'Chat with us or send an email',
-                  onTap: () => _showContactSupportSheet(isDark, cardColor),
+                  onTap: _showContactSupportSheet,
                 ),
-                _divider(isDark),
+                _divider(),
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.star_outline_rounded,
                   iconColor: const Color(0xFFF59E0B),
                   title: 'Rate the App',
@@ -394,40 +355,26 @@ final List<String> languages = [
 
             const SizedBox(height: 24),
 
-            _sectionTitle('About / Legal', isDark),
+            _sectionTitle('About / Legal'),
             const SizedBox(height: 10),
             _menuCard(
               cardColor: cardColor,
               children: [
-                _infoRow(
-                  isDark: isDark,
-                  title: 'Version',
-                  value: '1.0.0',
-                ),
-                _divider(isDark),
-                _infoRow(
-                  isDark: isDark,
-                  title: 'Region',
-                  value: 'Algeria',
-                ),
-                _divider(isDark),
-                _infoRow(
-                  isDark: isDark,
-                  title: 'Build',
-                  value: '2025.04.001',
-                ),
-                _divider(isDark),
+                _infoRow(title: 'Version', value: '1.0.0'),
+                _divider(),
+                _infoRow(title: 'Region', value: 'Algeria'),
+                _divider(),
+                _infoRow(title: 'Build', value: '2025.04.001'),
+                _divider(),
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.description_outlined,
                   iconColor: const Color(0xFF64748B),
                   title: 'Terms of Service',
                   subtitle: 'Review the terms governing app usage',
                   onTap: () => _showSnackBar('Opening Terms of Service…'),
                 ),
-                _divider(isDark),
+                _divider(),
                 _premiumTile(
-                  isDark: isDark,
                   icon: Icons.copyright_outlined,
                   iconColor: const Color(0xFF64748B),
                   title: 'Licenses',
@@ -436,19 +383,16 @@ final List<String> languages = [
                 ),
               ],
             ),
-
-            const SizedBox(height: 28),
-
           ],
         ),
       ),
     );
   }
 
-  void _showContactSupportSheet(bool isDark, Color cardColor) {
+  void _showContactSupportSheet() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: cardColor,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -464,7 +408,7 @@ final List<String> languages = [
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white24 : Colors.black12,
+                    color: Colors.black12,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -473,7 +417,7 @@ final List<String> languages = [
               Text(
                 'Contact Support',
                 style: GoogleFonts.syne(
-                  color: isDark ? Colors.white : Colors.black,
+                  color: Colors.black,
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
                 ),
@@ -482,14 +426,13 @@ final List<String> languages = [
               Text(
                 'Choose how you would like to reach us',
                 style: GoogleFonts.manrope(
-                  color: isDark ? Colors.white54 : Colors.black54,
+                  color: Colors.black54,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 24),
               _supportOption(
-                isDark: isDark,
                 icon: Icons.chat_bubble_outline_rounded,
                 iconColor: const Color(0xFF10B981),
                 label: 'Live Chat',
@@ -501,11 +444,10 @@ final List<String> languages = [
               ),
               const SizedBox(height: 14),
               _supportOption(
-                isDark: isDark,
                 icon: Icons.email_outlined,
                 iconColor: const Color(0xFF3B82F6),
                 label: 'Send an Email',
-                desc: 'support@p2pdelivery.dz',
+                desc: 'support@linkair.dz',
                 onTap: () {
                   Navigator.pop(ctx);
                   _showSnackBar('Opening email client…');
@@ -519,7 +461,6 @@ final List<String> languages = [
   }
 
   Widget _supportOption({
-    required bool isDark,
     required IconData icon,
     required Color iconColor,
     required String label,
@@ -531,8 +472,7 @@ final List<String> languages = [
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          // ignore: deprecated_member_use
-          color: iconColor.withOpacity(0.09),
+          color: iconColor.withAlpha(23),
           borderRadius: BorderRadius.circular(18),
         ),
         child: Row(
@@ -541,8 +481,7 @@ final List<String> languages = [
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                // ignore: deprecated_member_use
-                color: iconColor.withOpacity(0.15),
+                color: iconColor.withAlpha(38),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(icon, color: iconColor, size: 21),
@@ -554,7 +493,7 @@ final List<String> languages = [
                 Text(
                   label,
                   style: GoogleFonts.syne(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: Colors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -563,7 +502,7 @@ final List<String> languages = [
                 Text(
                   desc,
                   style: GoogleFonts.manrope(
-                    color: isDark ? Colors.white54 : Colors.black54,
+                    color: Colors.black54,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -571,26 +510,23 @@ final List<String> languages = [
               ],
             ),
             const Spacer(),
-            Icon(
-              Icons.chevron_right_rounded,
-              color: isDark ? Colors.white38 : Colors.black38,
-            ),
+            const Icon(Icons.chevron_right_rounded, color: Colors.black38),
           ],
         ),
       ),
     );
   }
 
-  void _showDeleteAccountDialog(bool isDark) {
+  void _showDeleteAccountDialog() {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF1A1A1D) : Colors.white,
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           'Delete Account',
           style: GoogleFonts.syne(
-            color: isDark ? Colors.white : Colors.black,
+            color: Colors.black,
             fontWeight: FontWeight.w900,
             fontSize: 18,
           ),
@@ -598,7 +534,7 @@ final List<String> languages = [
         content: Text(
           'This action is irreversible. All your data, parcels, and history will be permanently removed.',
           style: GoogleFonts.manrope(
-            color: isDark ? Colors.white70 : Colors.black87,
+            color: Colors.black87,
             fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
@@ -609,7 +545,7 @@ final List<String> languages = [
             child: Text(
               'Cancel',
               style: GoogleFonts.syne(
-                color: isDark ? Colors.white54 : Colors.black54,
+                color: Colors.black54,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -632,13 +568,13 @@ final List<String> languages = [
     );
   }
 
-  Widget _sectionTitle(String title, bool isDark) {
+  Widget _sectionTitle(String title) {
     return Text(
       title,
       style: GoogleFonts.syne(
         fontSize: 16,
         fontWeight: FontWeight.w700,
-        color: isDark ? Colors.white70 : Colors.black87,
+        color: Colors.black87,
       ),
     );
   }
@@ -657,7 +593,6 @@ final List<String> languages = [
   }
 
   Widget _premiumTile({
-    required bool isDark,
     required IconData icon,
     required Color iconColor,
     required String title,
@@ -671,8 +606,7 @@ final List<String> languages = [
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          // ignore: deprecated_member_use
-          color: iconColor.withOpacity(0.12),
+          color: iconColor.withAlpha(31),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Icon(icon, color: iconColor, size: 21),
@@ -680,7 +614,7 @@ final List<String> languages = [
       title: Text(
         title,
         style: GoogleFonts.syne(
-          color: isDark ? Colors.white : Colors.black,
+          color: Colors.black,
           fontSize: 14,
           fontWeight: FontWeight.w700,
         ),
@@ -690,21 +624,20 @@ final List<String> languages = [
         child: Text(
           subtitle,
           style: GoogleFonts.manrope(
-            color: isDark ? Colors.white54 : Colors.black54,
+            color: Colors.black54,
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
         ),
       ),
-      trailing: Icon(
+      trailing: const Icon(
         Icons.chevron_right_rounded,
-        color: isDark ? Colors.white38 : Colors.black38,
+        color: Colors.black38,
       ),
     );
   }
 
   Widget _premiumSwitchTile({
-    required bool isDark,
     required IconData icon,
     required Color iconColor,
     required String title,
@@ -718,8 +651,7 @@ final List<String> languages = [
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          // ignore: deprecated_member_use
-          color: iconColor.withOpacity(0.12),
+          color: iconColor.withAlpha(31),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Icon(icon, color: iconColor, size: 21),
@@ -727,7 +659,7 @@ final List<String> languages = [
       title: Text(
         title,
         style: GoogleFonts.syne(
-          color: isDark ? Colors.white : Colors.black,
+          color: Colors.black,
           fontSize: 14,
           fontWeight: FontWeight.w700,
         ),
@@ -737,7 +669,7 @@ final List<String> languages = [
         child: Text(
           subtitle,
           style: GoogleFonts.manrope(
-            color: isDark ? Colors.white54 : Colors.black54,
+            color: Colors.black54,
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
@@ -752,7 +684,6 @@ final List<String> languages = [
   }
 
   Widget _dropdownTile({
-    required bool isDark,
     required IconData icon,
     required Color iconColor,
     required String title,
@@ -769,8 +700,7 @@ final List<String> languages = [
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              // ignore: deprecated_member_use
-              color: iconColor.withOpacity(0.12),
+              color: iconColor.withAlpha(31),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(icon, color: iconColor, size: 21),
@@ -783,7 +713,7 @@ final List<String> languages = [
                 Text(
                   title,
                   style: GoogleFonts.syne(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: Colors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -792,7 +722,7 @@ final List<String> languages = [
                 Text(
                   subtitle,
                   style: GoogleFonts.manrope(
-                    color: isDark ? Colors.white54 : Colors.black54,
+                    color: Colors.black54,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -804,22 +734,24 @@ final List<String> languages = [
           DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: value,
-              dropdownColor: isDark ? const Color(0xFF1A1A1D) : Colors.white,
-              icon: Icon(
+              dropdownColor: Colors.white,
+              icon: const Icon(
                 Icons.expand_more_rounded,
-                color: isDark ? Colors.white38 : Colors.black38,
+                color: Colors.black38,
                 size: 20,
               ),
               style: GoogleFonts.syne(
-                color: isDark ? Colors.white70 : Colors.black87,
+                color: Colors.black87,
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),
               items: items
-                  .map((e) => DropdownMenuItem<String>(
-                        value: e,
-                        child: Text(e),
-                      ))
+                  .map(
+                    (e) => DropdownMenuItem<String>(
+                      value: e,
+                      child: Text(e),
+                    ),
+                  )
                   .toList(),
               onChanged: onChanged,
             ),
@@ -830,7 +762,6 @@ final List<String> languages = [
   }
 
   Widget _infoRow({
-    required bool isDark,
     required String title,
     required String value,
   }) {
@@ -841,7 +772,7 @@ final List<String> languages = [
           Text(
             title,
             style: GoogleFonts.manrope(
-              color: isDark ? Colors.white70 : Colors.black87,
+              color: Colors.black87,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -850,7 +781,7 @@ final List<String> languages = [
           Text(
             value,
             style: GoogleFonts.syne(
-              color: isDark ? Colors.white54 : Colors.black54,
+              color: Colors.black54,
               fontSize: 13,
               fontWeight: FontWeight.w700,
             ),
@@ -860,12 +791,11 @@ final List<String> languages = [
     );
   }
 
-  Widget _divider(bool isDark) {
+  Widget _divider() {
     return Divider(
       height: 1,
       thickness: 1,
-      // ignore: deprecated_member_use
-      color: isDark ? Colors.white.withOpacity(0.06) : Colors.black.withOpacity(0.05),
+      color: Colors.black.withAlpha(13),
     );
   }
 

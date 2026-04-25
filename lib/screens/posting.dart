@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 // ignore: unused_import
-import 'package:p2p_delivery_app/screens/home_screen.dart';
-import 'package:p2p_delivery_app/screens/MatchSystem.dart';
+import 'package:my_app/screens/home_screen.dart';
+import 'package:my_app/screens/match_system.dart';
 
 
 class Posting extends StatefulWidget {
@@ -388,6 +388,7 @@ class _PostingState extends State<Posting> {
                     child: Padding(
                       padding: EdgeInsets.only(right: index < 2 ? 10 : 0),
                       child: GestureDetector(
+                        // ignore: avoid_print
                         onTap: () => print('Upload photo ${index + 1}'),
                         child: Container(
                           height: 90,
