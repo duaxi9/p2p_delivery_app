@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:my_app/screens/personal_information_page.dart';
+import 'package:my_app/screens/privacy_security.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -117,9 +118,16 @@ class _SettingsPageState extends State<SettingsPage> {
                 _premiumTile(
                   icon: Icons.lock_outline,
                   iconColor: const Color(0xFFA855F7),
-                  title: 'Password & Security',
-                  subtitle: 'Manage password and account protection',
-                  onTap: () => _showSnackBar('Password & Security coming soon'),
+                  title: 'Privacy & Security',
+                  subtitle: 'Manage privacy settings and account protection',
+                  onTap: () {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                  builder: (_) => const PrivacySecurityPage(),
+                    ),
+                   );
+                 },
                 ),
               ],
             ),
@@ -249,9 +257,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 _divider(),
                 _premiumSwitchTile(
-                  icon: Icons.security,
+                  icon: Icons.lock_person_rounded,
                   iconColor: const Color(0xFF3B82F6),
-                  title: 'Two-Factor Authentication',
+                  title: 'Account Protection (2FA)',
                   subtitle: 'Add an extra security layer to your account',
                   value: twoFactorEnabled,
                   onChanged: (value) async {
@@ -311,11 +319,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 _divider(),
                 _premiumTile(
-                  icon: Icons.delete_outline,
-                  iconColor: const Color(0xFFEF4444),
-                  title: 'Delete My Account',
-                  subtitle: 'Permanently remove your data from our servers',
-                  onTap: _showDeleteAccountDialog,
+                  icon: Icons.tune_rounded,
+                  iconColor: const Color.fromARGB(255, 239, 97, 2),
+                  title: 'Privacy Controls',
+                  subtitle: 'Control who can see your activity and information',
+                  onTap: () => _showSnackBar('Opening Privacy Controls…'),
                 ),
               ],
             ),
@@ -517,56 +525,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _showDeleteAccountDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          'Delete Account',
-          style: GoogleFonts.syne(
-            color: Colors.black,
-            fontWeight: FontWeight.w900,
-            fontSize: 18,
-          ),
-        ),
-        content: Text(
-          'This action is irreversible. All your data, parcels, and history will be permanently removed.',
-          style: GoogleFonts.manrope(
-            color: Colors.black87,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'Cancel',
-              style: GoogleFonts.syne(
-                color: Colors.black54,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              _showSnackBar('Account deletion requested');
-            },
-            child: Text(
-              'Delete',
-              style: GoogleFonts.syne(
-                color: const Color(0xFFEF4444),
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _sectionTitle(String title) {
     return Text(
@@ -800,8 +758,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _showSnackBar(String text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(text)),
-    );
-  }
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(text)),
+  );
+}
 }
