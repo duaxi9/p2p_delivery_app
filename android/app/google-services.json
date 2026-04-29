@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "52532187573",
+    "project_id": "linkairr-app",
+    "storage_bucket": "linkairr-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52532187573:android:b1acdd067936cd131ec9fc",
+        "android_client_info": {
+          "package_name": "com.example.my_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpB_VtlTqj2WDplfpfBS8PyffwJxn22do"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
 
+import 'firebase_options.dart';
 import 'package:my_app/screens/welcome_screens.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const LinkAirApp());
 }
 
@@ -39,26 +47,21 @@ class _LinkAirAppState extends State<LinkAirApp> {
     return MaterialApp(
       title: 'LinkAir',
       debugShowCheckedModeBanner: false,
-
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: true,
       ),
-
       locale: _locale,
-
       supportedLocales: const [
         Locale('en'),
         Locale('fr'),
         Locale('ar'),
       ],
-
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-
       home: const WelcomeScreens(),
     );
   }

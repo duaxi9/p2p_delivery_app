@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/components/button.dart';
-import 'package:my_app/screens/colors_page.dart';
+import 'package:my_app/screens/Colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/screens/login.dart';
 import 'package:my_app/screens/signup.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_app/screens/chat_page.dart';
+import 'package:my_app/screens/ChatPage.dart';
 
 class TrackingPage extends StatelessWidget {
   final String orderId;
@@ -850,9 +850,7 @@ class _InfoCard extends StatelessWidget {
 
   const _InfoCard({
     required this.label,
-    required this.value,
-    // ignore: unused_element_parameter
-    this.gold = false,
+    required this.value, required this.gold,
   });
 
   @override

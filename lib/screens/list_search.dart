@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ListSearch extends StatefulWidget {
-  const ListSearch({super.key});
+  const ListSearch({super.key, required String fromCity, required String toCity});
 
   @override
   State<ListSearch> createState() => _ListSearchState();

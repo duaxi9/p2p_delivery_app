@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_app/screens/chat_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_app/screens/ChatPage.dart';
+import 'package:my_app/screens/auth_service.dart';
 
-// ignore: use_key_in_widget_constructors
 class RecentChats extends StatelessWidget {
-  final List<Map<String, dynamic>> chats = [
+  RecentChats({super.key});
+
+  final AuthService _authService = AuthService();
+
+  // ── Demo chats shown when no real chats exist ─────────────────────
+  final List<Map<String, dynamic>> _demoChats = [
     {
       'initials': 'YM',
       'color': Color.fromARGB(255, 234, 138, 218),
@@ -15,8 +21,9 @@ class RecentChats extends StatelessWidget {
       'rating': 4.8,
       'trips': 31,
       'deliveries': 74,
+      'otherUid': '',
       'messages': [
-        {'text': 'Hi, I saw your delivery request from Paris to Algiers. I\'ll be traveling there this Friday.', 'isSent': false},
+        {'text': 'Hi, I saw your delivery request from Paris to Algiers.', 'isSent': false},
         {'text': 'Hi! That\'s perfect. Are you available to take a small package?', 'isSent': true},
         {'text': 'Yes, I have space in my luggage', 'isSent': false},
         {'text': 'Around 2 kg, just clothes,', 'isSent': true},
@@ -33,6 +40,7 @@ class RecentChats extends StatelessWidget {
       'rating': 4.9,
       'trips': 48,
       'deliveries': 120,
+      'otherUid': '',
       'messages': [
         {'text': 'Can you tell me what\'s inside the package exactly?', 'isSent': false},
         {'text': 'Clothes and a pair of shoes, nothing fragile', 'isSent': true},
@@ -41,196 +49,190 @@ class RecentChats extends StatelessWidget {
         {'text': 'Perfect, that\'s easier for me.', 'isSent': false},
       ],
     },
-    {
-      'initials': 'SL',
-      'color': Color(0xFF0EA5A4),
-      'name': 'Sofia Lopez',
-      'message': 'Deal 👍',
-      'time': '1h ago',
-      'unread': 0,
-      'rating': 4.7,
-      'trips': 22,
-      'deliveries': 55,
-      'messages': [
-        {'text': 'You proposed 20€, for the ge is that flexible?', 'isSent': false},
-        {'text': 'I can go up to 25€ max.', 'isSent': true},
-        {'text': 'Alright, 25€ works for me.', 'isSent': false},
-        {'text': 'Deal 👍', 'isSent': true},
-      ],
-    },
-    {
-      'initials': 'DC',
-      'color': Colors.red,
-      'name': 'Daniel Costa',
-      'message': 'Of course, everything is ready.',
-      'time': '3h ago',
-      'unread': 0,
-      'rating': 4.7,
-      'trips': 18,
-      'deliveries': 40,
-      'messages': [
-        {'text': 'Hi, just confirming — my flight is tomorrow at 10 AM.', 'isSent': false},
-        {'text': 'Yes, I\'ll be there at 8:30 AM.', 'isSent': true},
-        {'text': 'Perfect. Please make sure the package is well packed.', 'isSent': false},
-        {'text': 'Of course, everything is ready.', 'isSent': true},
-      ],
-    },
-    {
-      'initials': 'DK',
-      'color': Color(0xFF3467EB),
-      'name': 'Douaa Kebaili',
-      'message': 'He\'ll meet you at the airport exit in 30 minutes.',
-      'time': 'Yesterday',
-      'unread': 3,
-      'rating': 4.3,
-      'trips': 14,
-      'deliveries': 30,
-      'messages': [
-        {'text': 'I\'ve arrived in Algiers.', 'isSent': false},
-        {'text': 'Great! I\'ll contact the receiver now.', 'isSent': true},
-        {'text': 'Let me know when and where to meet.', 'isSent': false},
-        {'text': 'He\'ll meet you at the airport exit in 30 minutes.', 'isSent': false},
-      ],
-    },
-    {
-      'initials': 'CM',
-      'color': Color(0xFF515050),
-      'name': 'Chloe Martin',
-      'message': 'I\'ll leave you a good rating ⭐',
-      'time': '2d ago',
-      'unread': 0,
-      'rating': 4.7,
-      'trips': 27,
-      'deliveries': 63,
-      'messages': [
-        {'text': 'Package delivered successfully 👍', 'isSent': false},
-        {'text': 'Perfect, thank you so much!', 'isSent': true},
-        {'text': 'No problem, everything went smoothly.', 'isSent': false},
-        {'text': 'I\'ll leave you a good rating ⭐', 'isSent': true},
-      ],
-    },
   ];
+
+  String _formatTime(dynamic timestamp) {
+    if (timestamp == null) return '';
+    try {
+      final dt = (timestamp as Timestamp).toDate();
+      final now = DateTime.now();
+      final diff = now.difference(dt);
+      if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+      if (diff.inHours < 24) return '${diff.inHours}h ago';
+      return '${diff.inDays}d ago';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  Widget _chatTile(BuildContext context, Map<String, dynamic> chat,
+      {bool isDemo = false}) {
+    final color = chat['color'] as Color? ?? const Color(0xFFB8960A);
+    final initials = (chat['initials'] ?? '?').toString();
+    final name = (chat['name'] ?? 'Unknown').toString();
+    final message = (chat['lastMessage'] ?? chat['message'] ?? '').toString();
+    final time = isDemo
+        ? chat['time'].toString()
+        : _formatTime(chat['lastTimestamp']);
+    final unread = (chat['unread'] ?? 0) as int;
+
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ChatPage(
+            initials: initials,
+            color: color,
+            name: name,
+            messages: isDemo
+                ? List<Map<String, dynamic>>.from(chat['messages'] ?? [])
+                : [],
+            rating: (chat['rating'] ?? 0.0) as double,
+            trips: (chat['trips'] ?? 0) as int,
+            deliveries: (chat['deliveries'] ?? 0) as int,
+            otherUid: isDemo ? '' : (chat['otherUid'] ?? ''),
+          ),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 12, left: 13, right: 13),
+        child: SizedBox(
+          height: 70,
+          child: Row(
+            children: [
+              Container(
+                width: 56, height: 56,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Center(
+                  child: Text(initials,
+                      style: GoogleFonts.syne(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700)),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(name,
+                        style: GoogleFonts.syne(
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 6),
+                    SizedBox(
+                      width: 180,
+                      child: Text(
+                        message.isEmpty ? 'Start a conversation' : message,
+                        style: GoogleFonts.manrope(
+                            fontSize: 13,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(time,
+                        style: GoogleFonts.manrope(
+                            fontSize: 12,
+                            color: Colors.black38,
+                            fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 6),
+                    unread > 0
+                        ? Container(
+                            height: 22, width: 22,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFB8960A),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: Text('$unread',
+                                style: GoogleFonts.manrope(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold)),
+                          )
+                        : const SizedBox(height: 22),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: chats.map((chat) {
-        return GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ChatPage(
-                initials: chat['initials'],
-                color: chat['color'],
-                name: chat['name'],
-                messages: List<Map<String, dynamic>>.from(chat['messages']),
-                rating: chat['rating'],
-                trips: chat['trips'],
-                deliveries: chat['deliveries'],
-              ),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 12, left: 13, right: 13),
-            child: SizedBox(
-              height: 70,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    child: Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: chat['color'],
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Center(
-                        child: Text(
-                          chat['initials'],
-                          style: GoogleFonts.syne(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          chat['name'],
-                          style: GoogleFonts.syne(
-                            fontSize: 16,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        SizedBox(
-                          width: 180,
-                          child: Text(
-                            chat['message'],
-                            style: GoogleFonts.manrope(
-                              fontSize: 13,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          chat['time'],
-                          style: GoogleFonts.manrope(
-                            fontSize: 13,
-                            color: Colors.black38,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        chat['unread'] > 0
-                            ? Container(
-                                height: 22,
-                                width: 22,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFB8960A),
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                child: Text(
-                                  '${chat['unread']}',
-                                  style: GoogleFonts.manrope(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              )
-                            : const SizedBox(height: 22),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+    return StreamBuilder<QuerySnapshot>(
+      stream: _authService.getChatsStream(),
+      builder: (context, snapshot) {
+        // ── Loading ──────────────────────────────────
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Padding(
+            padding: EdgeInsets.only(top: 40),
+            child: Center(
+                child: CircularProgressIndicator(color: Color(0xFFB8960A))),
+          );
+        }
+
+        // ── Real chats exist ─────────────────────────
+        if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+          final docs = snapshot.data!.docs;
+          return Column(
+            children: docs.map((doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              // find the other participant
+              final participants =
+                  List<String>.from(data['participants'] ?? []);
+              final myUid = _authService.currentUid ?? '';
+              final otherUid =
+                  participants.firstWhere((id) => id != myUid, orElse: () => '');
+
+              return _chatTile(context, {
+                ...data,
+                'otherUid': otherUid,
+                'initials': (data['travelerName'] ?? '?')
+                    .toString()
+                    .split(' ')
+                    .map((e) => e.isNotEmpty ? e[0] : '')
+                    .take(2)
+                    .join()
+                    .toUpperCase(),
+                'color': const Color(0xFFB8960A),
+                'name': data['travelerName'] ?? 'Unknown',
+                'rating': 0.0,
+                'trips': 0,
+                'deliveries': 0,
+                'unread': 0,
+              });
+            }).toList(),
+          );
+        }
+
+        // ── No real chats yet — show demo ────────────
+        return Column(
+          children: _demoChats
+              .map((chat) => _chatTile(context, chat, isDemo: true))
+              .toList(),
         );
-      }).toList(),
+      },
     );
   }
 }

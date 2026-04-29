@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:my_app/models/trip_model.dart';
 
 class ShareTripPage extends StatelessWidget {
@@ -29,7 +31,6 @@ class ShareTripPage extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 12),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
@@ -42,9 +43,7 @@ class ShareTripPage extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 24),
-
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -89,40 +88,6 @@ class ShareTripPage extends StatelessWidget {
 
                       const SizedBox(height: 24),
 
-                      // Trip info
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF7F6F2),
-                          borderRadius: BorderRadius.circular(22),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              '${trip.fromCity} (${trip.fromCode}) → ${trip.toCity} (${trip.toCode})',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Flight ${trip.flightNumber} • ${trip.departureDate}',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF8D8374),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 18),
-
-                      // Link box
                       Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
@@ -160,51 +125,61 @@ class ShareTripPage extends StatelessWidget {
                               onPressed: () => _copyLink(context),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFC49A00),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
                               ),
-                              child: const Text('Copy'),
+                              child: Text(
+                                'Copy',
+                                style: GoogleFonts.syne(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
 
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 24),
 
                       const Text(
                         'SHARE VIA',
                         style: TextStyle(
-                          letterSpacing: 3,
+                          letterSpacing: 2,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFFA0A7B3),
                         ),
                       ),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
-                      Wrap(
-                        spacing: 14,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _ShareItem(
-                            icon: Icons.chat,
+                            icon: FontAwesomeIcons.whatsapp,
                             label: 'WhatsApp',
-                            color: Colors.green,
+                            color: Color(0xFF25D366),
                             onTap: () => _copyLink(context),
                           ),
                           _ShareItem(
-                            icon: Icons.facebook,
+                            icon: FontAwesomeIcons.facebook,
                             label: 'Facebook',
-                            color: Colors.blue,
+                            color: Color(0xFF1877F2),
                             onTap: () => _copyLink(context),
                           ),
                           _ShareItem(
-                            icon: Icons.email,
-                            label: 'Email',
-                            color: Colors.red,
-                            onTap: () => _copyLink(context),
-                          ),
-                          _ShareItem(
-                            icon: Icons.camera_alt,
+                            icon: FontAwesomeIcons.instagram,
                             label: 'Instagram',
-                            color: Colors.purple,
+                            color: Color(0xFFE1306C),
+                            onTap: () => _copyLink(context),
+                          ),
+                          _ShareItem(
+                            icon: FontAwesomeIcons.envelope,
+                            label: 'Email',
+                            color: Color(0xFFB8960A),
                             onTap: () => _copyLink(context),
                           ),
                         ],
@@ -232,7 +207,7 @@ class ShareTripPage extends StatelessWidget {
 }
 
 class _ShareItem extends StatelessWidget {
-  final IconData icon;
+  final dynamic icon;
   final String label;
   final Color color;
   final VoidCallback onTap;
@@ -246,21 +221,35 @@ class _ShareItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
       onTap: onTap,
       child: Column(
         children: [
           Container(
-            width: 60,
-            height: 55,
+            width: 54,
+            height: 54,
             decoration: BoxDecoration(
-              color: const Color(0xFFF2F0EC),
+              color: const Color(0xFFF4F3F1),
               borderRadius: BorderRadius.circular(18),
             ),
-            child: Icon(icon, color: color),
+            child: Center(
+              child: FaIcon(
+                icon,
+                color: color,
+                size: 24,
+              ),
+            ),
           ),
-          const SizedBox(height: 6),
-          Text(label),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: GoogleFonts.manrope(
+              color: Colors.black87,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
         ],
       ),
     );

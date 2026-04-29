@@ -255,7 +255,7 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                         ),
                         Text(
-                          'Online',
+ 'Online',
                           style: GoogleFonts.manrope(
                             color: Color(0xFF00B32D),
                             fontSize: 13,

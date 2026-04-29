@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:my_app/models/trip_model.dart';
 import 'package:my_app/screens/plan_trip.dart';
 import 'package:my_app/screens/share_trip_page.dart';
-
 
 class TravelerPage extends StatefulWidget {
   const TravelerPage({super.key});
@@ -17,6 +17,8 @@ class _TravelerPageState extends State<TravelerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final trip = currentTrip;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF3F3F3),
       body: SafeArea(
@@ -36,10 +38,7 @@ class _TravelerPageState extends State<TravelerPage> {
 
               _sectionTitle('YOUR TRIP'),
               const SizedBox(height: 14),
-
-              currentTrip != null
-                  ? _buildTripCard(context)
-                  : _buildEmptyTripCard(context),
+              trip != null ? _buildTripCard(context, trip) : _buildEmptyTripCard(),
 
               const SizedBox(height: 28),
 
@@ -53,41 +52,45 @@ class _TravelerPageState extends State<TravelerPage> {
     );
   }
 
-  // ================= HEADER =================
   Widget _header(BuildContext context) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      GestureDetector(
-        onTap: () => Navigator.pop(context),
-        child: Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
-      ),
-      const SizedBox(height: 10),
-      Text(
-        'Carry & Earn',
-        style: GoogleFonts.syne(
-          color: Color(0xFFB8960A),
-          fontSize: 26,
-          fontWeight: FontWeight.w900,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.black87,
+            size: 20,
+          ),
         ),
-      ),
-      const SizedBox(height: 6),
-      Text(
-        'Carry parcels, earn money on every trip',
-        style: GoogleFonts.manrope(
-          color: Colors.black38,
-          fontWeight: FontWeight.w500,
-          fontSize: 15,
+        const SizedBox(height: 10),
+        Text(
+          'Carry & Earn',
+          style: GoogleFonts.syne(
+            color: const Color(0xFFB8960A),
+            fontSize: 26,
+            fontWeight: FontWeight.w900,
+          ),
         ),
-      ),
-      const SizedBox(height: 20),
-      Divider(color: Colors.black12, thickness: 1),
-    ],
-  );
-}
-  // ================= PLAN TRIP =================
+        const SizedBox(height: 6),
+        Text(
+          'Carry parcels, earn money on every trip',
+          style: GoogleFonts.manrope(
+            color: Colors.black38,
+            fontWeight: FontWeight.w500,
+            fontSize: 15,
+          ),
+        ),
+        const SizedBox(height: 20),
+        const Divider(color: Colors.black12, thickness: 1),
+      ],
+    );
+  }
+
   Widget _buildPlanTripCard(BuildContext context) {
     return InkWell(
+      borderRadius: BorderRadius.circular(20),
       onTap: () async {
         final TripModel? newTrip = await Navigator.push(
           context,
@@ -110,34 +113,26 @@ class _TravelerPageState extends State<TravelerPage> {
         ),
         child: Row(
           children: [
-            Icon(Icons.map, color: Color(0xFFC49A00)),
-            SizedBox(width: 12),
+            const Icon(Icons.map, color: Color(0xFFC49A00)),
+            const SizedBox(width: 12),
             Expanded(
               child: Text(
-                "Plan trip",
+                'Plan trip',
                 style: GoogleFonts.syne(
                   color: Colors.black,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  
                 ),
               ),
             ),
-            Icon(Icons.arrow_forward_ios, size: 16),
+            const Icon(Icons.arrow_forward_ios, size: 16),
           ],
         ),
       ),
     );
   }
 
-  // ================= TRIP CARD =================
-  Widget _buildTripCard(BuildContext context) {
-    if (currentTrip == null) {
-      return _buildEmptyTripCard(context);
-    }
-
-    final trip = currentTrip!;
-
+  Widget _buildTripCard(BuildContext context, TripModel trip) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -146,7 +141,6 @@ class _TravelerPageState extends State<TravelerPage> {
       ),
       child: Column(
         children: [
-          // Route
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -155,21 +149,29 @@ class _TravelerPageState extends State<TravelerPage> {
               _city(trip.toCode, trip.toCity),
             ],
           ),
-
           const SizedBox(height: 16),
-
-          // Info
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Departs ${trip.departureDate}"),
-              Text("Flight ${trip.flightNumber}"),
+              Text(
+                'Departs ${trip.departureDate}',
+                style: GoogleFonts.manrope(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black54,
+                ),
+              ),
+              Text(
+                'Flight ${trip.flightNumber}',
+                style: GoogleFonts.manrope(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black54,
+                ),
+              ),
             ],
           ),
-
           const SizedBox(height: 20),
-
-          // Stats
           Row(
             children: [
               Expanded(
@@ -190,33 +192,40 @@ class _TravelerPageState extends State<TravelerPage> {
                 child: _buildStatItem(
                   value: '${trip.luggageSpace} kg',
                   label: 'AVAILABLE',
-                  valueColor: Colors.blue,
+                  valueColor: Colors.black,
                 ),
               ),
             ],
           ),
-
           const SizedBox(height: 20),
-
-          // Buttons
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: currentTrip == null
-    ? null
-    : () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ShareTripPage(trip: currentTrip!),
-          ),
-        );
-      },
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ShareTripPage(trip: trip),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFC49A00),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
-                  child: const Text("Share trip"),
+                  child: Text(
+                    'Share trip',
+                    style: GoogleFonts.syne(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
@@ -227,7 +236,21 @@ class _TravelerPageState extends State<TravelerPage> {
                       currentTrip = null;
                     });
                   },
-                  child: const Text("Delete trip"),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    side: const BorderSide(color: Colors.black12),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: Text(
+                    'Delete trip',
+                    style: GoogleFonts.syne(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -237,36 +260,45 @@ class _TravelerPageState extends State<TravelerPage> {
     );
   }
 
-  // ================= EMPTY TRIP =================
-  Widget _buildEmptyTripCard(BuildContext context) {
+  Widget _buildEmptyTripCard() {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Center(
-        child:
-        Text('No trip yet',
-        style: GoogleFonts.syne(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  
-                )
-        
+        child: Text(
+          'No trip yet',
+          style: GoogleFonts.syne(
+            color: Colors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        
       ),
     );
   }
 
-  // ================= HELPERS =================
   Widget _city(String code, String city) {
     return Column(
       children: [
-        Text(code, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        Text(city, style: const TextStyle(color: Colors.grey)),
+        Text(
+          code,
+          style: GoogleFonts.syne(
+            fontSize: 24,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        Text(
+          city,
+          style: GoogleFonts.manrope(
+            color: Colors.grey,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ],
     );
   }
@@ -280,12 +312,22 @@ class _TravelerPageState extends State<TravelerPage> {
       children: [
         Text(
           value,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+          style: GoogleFonts.syne(
+            fontWeight: FontWeight.w800,
             color: valueColor,
+            fontSize: 16,
           ),
         ),
-        Text(label),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: GoogleFonts.manrope(
+            fontSize: 11,
+            color: Colors.black45,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.8,
+          ),
+        ),
       ],
     );
   }
@@ -293,24 +335,32 @@ class _TravelerPageState extends State<TravelerPage> {
   Widget _sectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
+      style: GoogleFonts.manrope(
         letterSpacing: 2,
         color: Colors.grey,
-        fontWeight: FontWeight.bold,
+        fontSize: 12,
+        fontWeight: FontWeight.w800,
       ),
     );
   }
 
   Widget _emptyParcelSection() {
-    return Center(
-      child: Text('No parcel requests yet',
-      style: GoogleFonts.syne(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  
-                )
-      
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Center(
+        child: Text(
+          'No parcel requests yet',
+          style: GoogleFonts.syne(
+            color: Colors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
     );
   }
