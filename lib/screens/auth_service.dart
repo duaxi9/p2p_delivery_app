@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_app/models/trip_model.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -141,7 +142,7 @@ String getChatId(String otherUid) {
 }
 
   // ── Save trip ─────────────────────────────────────────────────────
-  Future<String> saveTrip({
+  Future<String> saveTrip(TripModel trip, {
     required String fromCode,
     required String fromCity,
     required String toCode,
@@ -291,4 +292,39 @@ String getChatId(String otherUid) {
       return [];
     }
   }
+
+  Future<Object?> isChatUnlocked(String s) async {
+    return null;
+  }
+
+  Future<Object?> checkRequestStatus({required String toUid, required String tripId}) async {
+    return null;
+  }
+
+  Future<Object?> sendDeliveryRequest({required String toUid, required String toName, required String tripId, required String packageNote, required String packageType, required String weight, required String destination, required String proposedPayment}) async {
+    return null;
+  }
+
+  Future<void> respondToRequest({required String requestId, required String response}) async {}
+}
+
+
+Future<void> saveTrip(TripModel trip) async {
+  Object? currentUid;
+  final uid = currentUid;
+
+  if (uid == null) return;
+
+  await FirebaseFirestore.instance.collection('trips').add({
+    'uid': uid,
+    'fromCode': trip.fromCode,
+    'fromCity': trip.fromCity,
+    'toCode': trip.toCode,
+    'toCity': trip.toCity,
+    'departureDate': trip.departureDate,
+    'flightNumber': trip.flightNumber,
+    'luggageSpace': trip.luggageSpace,
+    'pricePerKg': trip.pricePerKg,
+    'createdAt': FieldValue.serverTimestamp(),
+  });
 }

@@ -49,6 +49,11 @@ class _SearchState extends State<Search> {
     {"name": "Tokyo", "code": "NRT", "country": "Japan"},
   ];
 
+  String _cleanCityName(String value) {
+    if (value.isEmpty) return '';
+    return value.split('(').first.trim();
+  }
+
   void _showCityPicker(bool isFrom) {
     String query = "";
     List<Map<String, String>> filtered = List.from(_cities);
@@ -78,55 +83,48 @@ class _SearchState extends State<Search> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
-                    child: Text(
-                      isFrom
-                          ? "Select departure city"
-                          : "Select destination city",
-                      style: GoogleFonts.syne(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
-                      ),
+                  Text(
+                    isFrom ? "Select departure city" : "Select destination city",
+                    style: GoogleFonts.syne(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 14),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 18),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF2F2F2),
-                        borderRadius: BorderRadius.circular(14),
+                    child: TextField(
+                      autofocus: true,
+                      onChanged: (value) {
+                        setModalState(() {
+                          query = value.toLowerCase();
+                          filtered = _cities.where((c) {
+                            return c["name"]!.toLowerCase().contains(query) ||
+                                c["country"]!.toLowerCase().contains(query) ||
+                                c["code"]!.toLowerCase().contains(query);
+                          }).toList();
+                        });
+                      },
+                      style: GoogleFonts.manrope(
+                        color: Colors.black87,
+                        fontSize: 15,
                       ),
-                      child: TextField(
-                        autofocus: true,
-                        onChanged: (value) {
-                          setModalState(() {
-                            query = value.toLowerCase();
-                            filtered = _cities.where((c) {
-                              return c["name"]!.toLowerCase().contains(query) ||
-                                  c["country"]!.toLowerCase().contains(query) ||
-                                  c["code"]!.toLowerCase().contains(query);
-                            }).toList();
-                          });
-                        },
-                        style: GoogleFonts.manrope(
-                            color: Colors.black87, fontSize: 15),
-                        decoration: InputDecoration(
-                          hintText: "Search city or country...",
-                          hintStyle: GoogleFonts.manrope(
-                              color: Colors.black38, fontSize: 15),
-                          prefixIcon:
-                              const Icon(Icons.search, color: Colors.black38),
-                          filled: true,
-                          fillColor: const Color(0xFFF2F2F2),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 12),
+                      decoration: InputDecoration(
+                        hintText: "Search city or country...",
+                        hintStyle: GoogleFonts.manrope(
+                          color: Colors.black38,
+                          fontSize: 15,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: Colors.black38,
+                        ),
+                        filled: true,
+                        fillColor: const Color(0xFFF2F2F2),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
                         ),
                       ),
                     ),
@@ -137,11 +135,11 @@ class _SearchState extends State<Search> {
                       itemCount: filtered.length,
                       itemBuilder: (context, index) {
                         final city = filtered[index];
+                        final cityText = "${city['name']} (${city['code']})";
+
                         final isSelected = isFrom
-                            ? _fromController.text ==
-                                "${city['name']} (${city['code']})"
-                            : _toController.text ==
-                                "${city['name']} (${city['code']})";
+                            ? _fromController.text == cityText
+                            : _toController.text == cityText;
 
                         return ListTile(
                           leading: Container(
@@ -157,7 +155,7 @@ class _SearchState extends State<Search> {
                                 style: GoogleFonts.syne(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
-                                  color: const Color(0xFFB8860B),
+                                  color: const Color(0xFFB8960A),
                                 ),
                               ),
                             ),
@@ -178,17 +176,17 @@ class _SearchState extends State<Search> {
                             ),
                           ),
                           trailing: isSelected
-                              ? const Icon(Icons.check_circle,
-                                  color: Color(0xFFB8960A))
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  color: Color(0xFFB8960A),
+                                )
                               : null,
                           onTap: () {
                             setState(() {
                               if (isFrom) {
-                                _fromController.text =
-                                    "${city['name']} (${city['code']})";
+                                _fromController.text = cityText;
                               } else {
-                                _toController.text =
-                                    "${city['name']} (${city['code']})";
+                                _toController.text = cityText;
                               }
                             });
                             Navigator.pop(context);
@@ -216,7 +214,10 @@ class _SearchState extends State<Search> {
           borderRadius: BorderRadius.circular(10),
           boxShadow: const [
             BoxShadow(
-                color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+              color: Colors.black26,
+              blurRadius: 6,
+              offset: Offset(0, 2),
+            ),
           ],
         ),
         height: 60,
@@ -224,16 +225,21 @@ class _SearchState extends State<Search> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
-              const Icon(Icons.keyboard_double_arrow_left,
-                  color: Color(0xFFC39A06)),
+              const Icon(
+                Icons.keyboard_double_arrow_left,
+                color: Color(0xFFB8960A),
+              ),
               const SizedBox(width: 8),
-              Text(
-                _fromController.text.isEmpty ? 'From' : _fromController.text,
-                style: GoogleFonts.manrope(
-                  color: _fromController.text.isEmpty
-                      ? Colors.black38
-                      : Colors.black87,
-                  fontSize: 16,
+              Expanded(
+                child: Text(
+                  _fromController.text.isEmpty ? 'From' : _fromController.text,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.manrope(
+                    color: _fromController.text.isEmpty
+                        ? Colors.black38
+                        : Colors.black87,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ],
@@ -253,7 +259,10 @@ class _SearchState extends State<Search> {
           borderRadius: BorderRadius.circular(10),
           boxShadow: const [
             BoxShadow(
-                color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+              color: Colors.black26,
+              blurRadius: 6,
+              offset: Offset(0, 2),
+            ),
           ],
         ),
         height: 60,
@@ -261,16 +270,21 @@ class _SearchState extends State<Search> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
-              const Icon(Icons.keyboard_double_arrow_right,
-                  color: Color(0xFFC39A06)),
+              const Icon(
+                Icons.keyboard_double_arrow_right,
+                color: Color(0xFFB8960A),
+              ),
               const SizedBox(width: 8),
-              Text(
-                _toController.text.isEmpty ? 'TO' : _toController.text,
-                style: GoogleFonts.manrope(
-                  color: _toController.text.isEmpty
-                      ? Colors.black38
-                      : Colors.black87,
-                  fontSize: 16,
+              Expanded(
+                child: Text(
+                  _toController.text.isEmpty ? 'To' : _toController.text,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.manrope(
+                    color: _toController.text.isEmpty
+                        ? Colors.black38
+                        : Colors.black87,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ],
@@ -280,7 +294,7 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Widget buildBirthDay() {
+  Widget buildDatePicker() {
     return GestureDetector(
       onTap: () async {
         DateTime? picked = await showDatePicker(
@@ -301,6 +315,7 @@ class _SearchState extends State<Search> {
             );
           },
         );
+
         if (picked != null) {
           setState(() {
             _deadlineController.text =
@@ -317,7 +332,10 @@ class _SearchState extends State<Search> {
           borderRadius: BorderRadius.circular(10),
           boxShadow: const [
             BoxShadow(
-                color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+              color: Colors.black26,
+              blurRadius: 6,
+              offset: Offset(0, 2),
+            ),
           ],
         ),
         height: 60,
@@ -325,7 +343,7 @@ class _SearchState extends State<Search> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
-              const Icon(Icons.edit_calendar, color: Color(0xFFC39A06)),
+              const Icon(Icons.edit_calendar, color: Color(0xFFB8960A)),
               const SizedBox(width: 8),
               Text(
                 _deadlineController.text.isEmpty
@@ -345,29 +363,41 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Widget buildLRegisterBtn() {
+  Widget buildSearchButton() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
       child: ElevatedButton(
-       // In your Search page, update the Search button onPressed:
-onPressed: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => ListSearch(
-        fromCity: _fromController.text.isNotEmpty
-            ? _fromController.text.split('(').first.trim()
-            : '',
-        toCity: _toController.text.isNotEmpty
-            ? _toController.text.split('(').first.trim()
-            : '',
-      ),
-    ),
-  );
-},
-        style: OutlinedButton.styleFrom(
+        onPressed: isFormValid
+            ? () {
+                final fromCity = _cleanCityName(_fromController.text);
+                final toCity = _cleanCityName(_toController.text);
+
+                final parcel = ParcelRequest(
+                  fromCity: fromCity,
+                  toCity: toCity,
+                  description: 'Parcel delivery request',
+                  packageType: 'General',
+                  weight: 1.0,
+                  price: '',
+                );
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ListSearch(
+                      parcel: parcel,
+                      fromCity: fromCity,
+                      toCity: toCity,
+                    ),
+                  ),
+                );
+              }
+            : null,
+        style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFFF2F2F0),
+          disabledBackgroundColor: const Color(0xFFF2F2F0),
+          elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 14),
           side: BorderSide(
             color: isFormValid ? const Color(0xFFB8960A) : Colors.black26,
@@ -389,48 +419,51 @@ onPressed: () {
   }
 
   @override
+  void dispose() {
+    _fromController.dispose();
+    _toController.dispose();
+    _deadlineController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F0),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 600,
-              decoration: const BoxDecoration(color: Color(0xFFEDEDEC)),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Find a Traveler',
-                    style: GoogleFonts.syne(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 22,
-                    ),
-                  ),
-                  Text(
-                    'Who can carry your parcel',
-                    style: GoogleFonts.syne(
-                      color: Colors.black38,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  buildDepart(),
-                  const SizedBox(height: 16),
-                  buildTo(),
-                  const SizedBox(height: 16),
-                  buildBirthDay(),
-                  buildLRegisterBtn(),
-                ],
+        child: Container(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(color: Color(0xFFEDEDEC)),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Find a Traveler',
+                style: GoogleFonts.syne(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 22,
+                ),
               ),
-            ),
-          ],
+              Text(
+                'Who can carry your parcel',
+                style: GoogleFonts.syne(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 40),
+              buildDepart(),
+              const SizedBox(height: 16),
+              buildTo(),
+              const SizedBox(height: 16),
+              buildDatePicker(),
+              buildSearchButton(),
+            ],
+          ),
         ),
       ),
     );

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,6 +38,10 @@ class _SignUpScreenState extends State<SignUp> {
   static const Color background = Color(0xFFF7F7F5);
   static const Color fieldColor = Color(0xFFF0F0EE);
 
+  final List<TextInputFormatter> nameOnlyFormatter = [
+    FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z ]")),
+  ];
+
   @override
   void dispose() {
     nameController.dispose();
@@ -49,36 +55,51 @@ class _SignUpScreenState extends State<SignUp> {
   }
 
   Future<void> _signUp() async {
-    if (!isRememberMe) {
-      showSnackBAR(context, "Please agree to the Privacy Policy and Terms.");
-      return;
-    }
+  final nameRegex = RegExp(r"^[a-zA-Z ]+$");
 
-    setState(() => isLoading = true);
+  final firstName = firstNameController.text.trim();
+  final lastName = lastNameController.text.trim();
 
-    final result = await _authService.signUpUser(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-      username: nameController.text.trim(),
-      firstname: firstNameController.text.trim(),
-      lastname: lastNameController.text.trim(),
-      date: _birthDateController.text.trim(),
-      phonenumber: phoneController.text.trim(),
-    );
-
-    if (!mounted) return;
-
-    setState(() => isLoading = false);
-
-    if (result == "success") {
-      showSnackBAR(context, "Signup successful! Now login.");
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const Login()),
-      );
-    } else {
-      showSnackBAR(context, "Signup failed: $result");
-    }
+  if (firstName.isEmpty || !nameRegex.hasMatch(firstName)) {
+    showSnackBAR(context, "First name can only contain letters.");
+    return;
   }
+
+  if (lastName.isEmpty || !nameRegex.hasMatch(lastName)) {
+    showSnackBAR(context, "Last name can only contain letters.");
+    return;
+  }
+
+  if (!isRememberMe) {
+    showSnackBAR(context, "Please agree to the Privacy Policy and Terms.");
+    return;
+  }
+
+  setState(() => isLoading = true);
+
+  final result = await _authService.signUpUser(
+    email: emailController.text.trim(),
+    password: passwordController.text.trim(),
+    username: nameController.text.trim(),
+    firstname: firstName,
+    lastname: lastName,
+    date: _birthDateController.text.trim(),
+    phonenumber: phoneController.text.trim(),
+  );
+
+  if (!mounted) return;
+
+  setState(() => isLoading = false);
+
+  if (result == "success") {
+    showSnackBAR(context, "Signup successful! Now login.");
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const Login()),
+    );
+  } else {
+    showSnackBAR(context, "Signup failed: $result");
+  }
+}
 
   Future<void> _pickBirthDate() async {
     final DateTime? picked = await showDatePicker(
@@ -119,13 +140,13 @@ class _SignUpScreenState extends State<SignUp> {
     bool obscureText = false,
     VoidCallback? onTap,
     Widget? suffixIcon,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
       height: 58,
       decoration: BoxDecoration(
         color: fieldColor,
         borderRadius: BorderRadius.circular(18),
-        // ignore: deprecated_member_use
         border: Border.all(color: Colors.black.withOpacity(0.04)),
       ),
       child: TextField(
@@ -134,6 +155,7 @@ class _SignUpScreenState extends State<SignUp> {
         readOnly: readOnly,
         obscureText: obscureText,
         onTap: onTap,
+        inputFormatters: inputFormatters,
         style: GoogleFonts.manrope(
           color: Colors.black87,
           fontSize: 14.5,
@@ -164,6 +186,7 @@ class _SignUpScreenState extends State<SignUp> {
             hint: 'First name',
             icon: Symbols.person,
             keyboardType: TextInputType.name,
+            inputFormatters: nameOnlyFormatter,
           ),
         ),
         const SizedBox(width: 12),
@@ -173,6 +196,7 @@ class _SignUpScreenState extends State<SignUp> {
             hint: 'Last name',
             icon: Symbols.person_outline,
             keyboardType: TextInputType.name,
+            inputFormatters: nameOnlyFormatter,
           ),
         ),
       ],
@@ -318,7 +342,6 @@ class _SignUpScreenState extends State<SignUp> {
                     ),
                   ),
                   const SizedBox(height: 28),
-
                   Container(
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
@@ -326,7 +349,6 @@ class _SignUpScreenState extends State<SignUp> {
                       borderRadius: BorderRadius.circular(26),
                       boxShadow: [
                         BoxShadow(
-                          // ignore: deprecated_member_use
                           color: Colors.black.withOpacity(0.05),
                           blurRadius: 18,
                           offset: const Offset(0, 8),
@@ -338,9 +360,12 @@ class _SignUpScreenState extends State<SignUp> {
                         _firstLastNameFields(),
                         const SizedBox(height: 14),
                         _inputField(
-                          controller: nameController,
+                         controller: nameController,
                           hint: 'Username',
                           icon: Symbols.person_edit,
+                          inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9_]")),
+                           ],
                         ),
                         const SizedBox(height: 14),
                         _inputField(
@@ -363,6 +388,9 @@ class _SignUpScreenState extends State<SignUp> {
                           hint: 'Phone number',
                           icon: Symbols.call,
                           keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
                         ),
                         const SizedBox(height: 14),
                         _inputField(
@@ -387,12 +415,9 @@ class _SignUpScreenState extends State<SignUp> {
                         const SizedBox(height: 12),
                         _agreementRow(),
                         const SizedBox(height: 18),
-
                         isLoading
                             ? const Center(
-                                child: CircularProgressIndicator(
-                                  color: gold,
-                                ),
+                                child: CircularProgressIndicator(color: gold),
                               )
                             : SizedBox(
                                 width: double.infinity,
@@ -404,7 +429,6 @@ class _SignUpScreenState extends State<SignUp> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 22),
                   _loginLink(),
                 ],

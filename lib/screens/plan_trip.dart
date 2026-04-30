@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/models/trip_model.dart';
+import 'package:my_app/screens/auth_service.dart';
 
 
 class PlanTripPage extends StatefulWidget {
@@ -262,27 +263,31 @@ class _PlanTripPageState extends State<PlanTripPage> {
     });
   }
 
-  void _submitTrip() {
-    if (_fromCity == null ||
-        _toCity == null ||
-        _selectedDate == null ||
-        _flightNumberController.text.trim().isEmpty) {
-      return;
-    }
-
-    final trip = TripModel(
-      fromCode: _extractCode(_fromCity!),
-      fromCity: _extractCity(_fromCity!),
-      toCode: _extractCode(_toCity!),
-      toCity: _extractCity(_toCity!),
-      departureDate: _formatDate(_selectedDate!),
-      flightNumber: _flightNumberController.text.trim(),
-      luggageSpace: _luggageSpace.toStringAsFixed(0),
-      pricePerKg: '8',
-    );
-
-    Navigator.pop(context, trip);
+  Future<void> _submitTrip() async {
+  if (_fromCity == null ||
+      _toCity == null ||
+      _selectedDate == null ||
+      _flightNumberController.text.trim().isEmpty) {
+    return;
   }
+
+  final trip = TripModel(
+    fromCode: _extractCode(_fromCity!),
+    fromCity: _extractCity(_fromCity!),
+    toCode: _extractCode(_toCity!),
+    toCity: _extractCity(_toCity!),
+    departureDate: _formatDate(_selectedDate!),
+    flightNumber: _flightNumberController.text.trim(),
+    luggageSpace: _luggageSpace.toStringAsFixed(0),
+    pricePerKg: '8',
+  );
+
+  await AuthService().saveTrip(trip, fromCode: '', fromCity: '', toCode: '', toCity: '', departureDate: '', flightNumber: '', luggageSpace: '', pricePerKg: '');
+
+  if (!mounted) return;
+
+  Navigator.pop(context, trip);
+}
 
   @override
   Widget build(BuildContext context) {

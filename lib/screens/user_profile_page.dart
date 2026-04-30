@@ -16,7 +16,7 @@ class UserProfilePage extends StatelessWidget {
     required this.name,
     required this.rating,
     required this.trips,
-    required this.deliveries,
+    required this.deliveries, String? otherUid, required tripId, required packageType, required weight, required destination, required proposedPayment, required packageNote,
   });
 
   Widget _acceptChip(String label, Color textColor, Color bgColor) {

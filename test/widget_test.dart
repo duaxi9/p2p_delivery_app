@@ -5,11 +5,8 @@ import 'package:my_app/screens/home_screen.dart';
 void main() {
   testWidgets('HomeScreen builds correctly', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: HomeScreen(
-          onLanguageChanged: (Locale value) {},
-          selectedLanguage: 'English',
-        ),
+      const MaterialApp(
+        home: HomeScreen(),
       ),
     );
 

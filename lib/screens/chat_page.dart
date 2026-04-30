@@ -1,6 +1,9 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_app/screens/chatbottomsheet_page.dart';
+import 'package:my_app/screens/auth_service.dart';
 import 'package:my_app/screens/user_profile_page.dart';
 
 class ChatPage extends StatefulWidget {
@@ -11,6 +14,7 @@ class ChatPage extends StatefulWidget {
   final double rating;
   final int trips;
   final int deliveries;
+  final String? otherUid;
 
   const ChatPage({
     super.key,
@@ -21,6 +25,7 @@ class ChatPage extends StatefulWidget {
     required this.rating,
     required this.trips,
     required this.deliveries,
+    this.otherUid,
   });
 
   @override
@@ -28,25 +33,49 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  late List<Map<String, dynamic>> _messages;
   final ScrollController _scrollController = ScrollController();
+  final AuthService _authService = AuthService();
+  late String _chatId;
+  bool _useRealtime = false;
+  bool _chatUnlocked = false;
+  bool _checkingLock = true;
 
   @override
   void initState() {
     super.initState();
-    _messages = List.from(widget.messages);
+    if (widget.otherUid != null && widget.otherUid!.isNotEmpty) {
+      _chatId = _authService.getChatId(widget.otherUid!);
+      _useRealtime = true;
+      _checkChatUnlock();
+    } else {
+      _checkingLock = false;
+    }
   }
 
-  void _addMessage(String text) {
-    setState(() {
-      _messages.add({'text': text, 'isSent': true});
-    });
-    Future.delayed(Duration(milliseconds: 100), () {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+  Future<void> _checkChatUnlock() async {
+    final unlocked =
+    (await _authService.isChatUnlocked(widget.otherUid!)) as bool? ?? false;
+    if (mounted) {
+      setState(() {
+        _chatUnlocked = unlocked;
+        _checkingLock = false;
+      });
+    }
+  }
+
+  void _sendMessage(String text) async {
+    if (!_chatUnlocked) return;
+    if (_useRealtime) {
+      await _authService.sendMessage(chatId: _chatId, text: text);
+    }
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
@@ -54,7 +83,7 @@ class _ChatPageState extends State<ChatPage> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => Padding(
@@ -63,7 +92,8 @@ class _ChatPageState extends State<ChatPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
                 color: Colors.black12,
                 borderRadius: BorderRadius.circular(2),
@@ -76,18 +106,18 @@ class _ChatPageState extends State<ChatPage> {
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => UserProfilePage(
-                      initials: widget.initials,
-                      color: widget.color,
-                      name: widget.name,
-                      rating: widget.rating,
-                      trips: widget.trips,
-                      deliveries: widget.deliveries,
-                    ),
-                  ),
-                );
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => UserProfilePage(
+                        initials: widget.initials,
+                        color: widget.color,
+                        name: widget.name,
+                        rating: widget.rating,
+                        trips: widget.trips,
+                        deliveries: widget.deliveries,
+                        otherUid: widget.otherUid, tripId: null, packageType: null, weight: null, destination: null, proposedPayment: null, packageNote: null,
+                      ),
+                    ));
               },
             ),
             _menuOption(
@@ -95,14 +125,12 @@ class _ChatPageState extends State<ChatPage> {
               label: 'Mute notifications',
               onTap: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${widget.name} muted',
-                        style: GoogleFonts.manrope(fontSize: 13)),
-                    backgroundColor: Colors.black87,
-                    duration: Duration(seconds: 2),
-                  ),
-                );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('${widget.name} muted',
+                      style: GoogleFonts.manrope(fontSize: 13)),
+                  backgroundColor: Colors.black87,
+                  duration: const Duration(seconds: 2),
+                ));
               },
             ),
             _menuOption(
@@ -146,14 +174,9 @@ class _ChatPageState extends State<ChatPage> {
   }) {
     return ListTile(
       leading: Icon(icon, color: color, size: 22),
-      title: Text(
-        label,
-        style: GoogleFonts.syne(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
-      ),
+      title: Text(label,
+          style: GoogleFonts.syne(
+              fontSize: 15, fontWeight: FontWeight.w600, color: color)),
       onTap: onTap,
     );
   }
@@ -168,9 +191,11 @@ class _ChatPageState extends State<ChatPage> {
       context: context,
       builder: (_) => AlertDialog(
         title: Text(title,
-            style: GoogleFonts.syne(fontWeight: FontWeight.w700, fontSize: 16)),
+            style:
+                GoogleFonts.syne(fontWeight: FontWeight.w700, fontSize: 16)),
         content: Text(message,
-            style: GoogleFonts.manrope(fontSize: 14, color: Colors.black54)),
+            style:
+                GoogleFonts.manrope(fontSize: 14, color: Colors.black54)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -188,12 +213,133 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  Widget _buildMessageBubble(String text, bool isSent) {
+    return Align(
+      alignment: isSent ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        constraints: const BoxConstraints(maxWidth: 270),
+        decoration: BoxDecoration(
+          color: isSent ? Colors.black : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: const [
+            BoxShadow(
+                color: Colors.black12,
+                blurRadius: 3,
+                offset: Offset(0, 2))
+          ],
+        ),
+        child: Text(
+          text,
+          style: GoogleFonts.syne(
+            color: isSent ? Colors.white : Colors.black,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLockedState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF2F2F2),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Icon(Icons.lock_outline,
+                  color: Colors.black38, size: 32),
+            ),
+            const SizedBox(height: 16),
+            Text('Chat Locked',
+                style: GoogleFonts.syne(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.black87)),
+            const SizedBox(height: 8),
+            Text(
+              'Chat becomes available only after ${widget.name} accepts your delivery request.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.manrope(
+                  fontSize: 14,
+                  color: Colors.black45,
+                  height: 1.5),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRealtimeMessages() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _authService.getMessagesStream(_chatId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+              child:
+                  CircularProgressIndicator(color: Color(0xFFB8960A)));
+        }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Center(
+            child: Text('No messages yet.\nSay hello! 👋',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.manrope(
+                    color: Colors.black38, fontSize: 14)),
+          );
+        }
+        final docs = snapshot.data!.docs;
+        final myUid = _authService.currentUid ?? '';
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController
+                .jumpTo(_scrollController.position.maxScrollExtent);
+          }
+        });
+        return ListView.builder(
+          controller: _scrollController,
+          padding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          itemCount: docs.length,
+          itemBuilder: (context, index) {
+            final data = docs[index].data() as Map<String, dynamic>;
+            final isSent = data['senderId'] == myUid;
+            return _buildMessageBubble(data['text'] ?? '', isSent);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildStaticMessages() {
+    return ListView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      itemCount: widget.messages.length,
+      itemBuilder: (context, index) {
+        final msg = widget.messages[index];
+        return _buildMessageBubble(
+            msg['text'] ?? '', msg['isSent'] as bool);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEDEDEC),
+      backgroundColor: const Color(0xFFEDEDEC),
       appBar: AppBar(
-        backgroundColor: Color(0xFFEDEDEC),
+        backgroundColor: const Color(0xFFEDEDEC),
         elevation: 0,
         automaticallyImplyLeading: false,
         titleSpacing: 0,
@@ -203,24 +349,24 @@ class _ChatPageState extends State<ChatPage> {
             children: [
               GestureDetector(
                 onTap: () => Navigator.pop(context),
-                child: Icon(Icons.arrow_back_ios_new,
+                child: const Icon(Icons.arrow_back_ios_new,
                     color: Colors.black87, size: 20),
               ),
               const SizedBox(width: 12),
               GestureDetector(
                 onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => UserProfilePage(
-                      initials: widget.initials,
-                      color: widget.color,
-                      name: widget.name,
-                      rating: widget.rating,
-                      trips: widget.trips,
-                      deliveries: widget.deliveries,
-                    ),
-                  ),
-                ),
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => UserProfilePage(
+                        initials: widget.initials,
+                        color: widget.color,
+                        name: widget.name,
+                        rating: widget.rating,
+                        trips: widget.trips,
+                        deliveries: widget.deliveries,
+                        otherUid: widget.otherUid, tripId: null, packageType: null, weight: null, destination: null, proposedPayment: null, packageNote: null,
+                      ),
+                    )),
                 child: Row(
                   children: [
                     Container(
@@ -231,14 +377,11 @@ class _ChatPageState extends State<ChatPage> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Center(
-                        child: Text(
-                          widget.initials,
-                          style: GoogleFonts.syne(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                        child: Text(widget.initials,
+                            style: GoogleFonts.syne(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700)),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -246,18 +389,19 @@ class _ChatPageState extends State<ChatPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Text(widget.name,
+                            style: GoogleFonts.syne(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700)),
                         Text(
-                          widget.name,
-                          style: GoogleFonts.syne(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
- 'Online',
+                          _chatUnlocked
+                              ? 'Online'
+                              : (_useRealtime ? 'Locked' : 'Demo chat'),
                           style: GoogleFonts.manrope(
-                            color: Color(0xFF00B32D),
+                            color: _chatUnlocked
+                                ? const Color(0xFF00B32D)
+                                : Colors.black38,
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                           ),
@@ -268,68 +412,44 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ),
               const Spacer(),
-              Icon(Icons.call, color: Colors.black38, size: 20),
-              const SizedBox(width: 10),
-              Icon(Icons.videocam_rounded, color: Colors.black38, size: 20),
-              const SizedBox(width: 10),
-              // ── 3 dots ────────────────────────────
+              if (_chatUnlocked) ...[
+                const Icon(Icons.call, color: Colors.black38, size: 20),
+                const SizedBox(width: 10),
+                const Icon(Icons.videocam_rounded,
+                    color: Colors.black38, size: 20),
+                const SizedBox(width: 10),
+              ],
               GestureDetector(
                 onTap: _showMoreOptions,
-                child: Icon(Icons.more_vert, color: Colors.black38, size: 20),
+                child: const Icon(Icons.more_vert,
+                    color: Colors.black38, size: 20),
               ),
             ],
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(4),
+          preferredSize: const Size.fromHeight(4),
           child: Container(color: Colors.black12, height: 1),
         ),
       ),
-      body: Column(
-        children: [
-          const SizedBox(height: 16),
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final msg = _messages[index];
-                final isSent = msg['isSent'] as bool;
-                return Align(
-                  alignment:
-                      isSent ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 12),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    constraints: BoxConstraints(maxWidth: 270),
-                    decoration: BoxDecoration(
-                      color: isSent ? Colors.black : Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 3,
-                            offset: Offset(0, 2))
-                      ],
-                    ),
-                    child: Text(
-                      msg['text'],
-                      style: GoogleFonts.syne(
-                        color: isSent ? Colors.white : Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                );
-              },
+      body: _checkingLock
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFFB8960A)))
+          : Column(
+              children: [
+                const SizedBox(height: 16),
+                Expanded(
+                  child: !_useRealtime
+                      ? _buildStaticMessages()
+                      : _chatUnlocked
+                          ? _buildRealtimeMessages()
+                          : _buildLockedState(),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-      bottomSheet: ChatBottomSheet(onSend: _addMessage),
+      bottomSheet: _chatUnlocked || !_useRealtime
+          ? ChatBottomSheet(onSend: _sendMessage)
+          : const SizedBox.shrink(),
     );
   }
 }

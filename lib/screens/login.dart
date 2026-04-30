@@ -201,38 +201,35 @@ class _LoginScreenState extends State<Login> {
   }
 
   Widget buildLoginBtn() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () => Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => HomeScreen(
-              onLanguageChanged: (Locale value) {},
-              selectedLanguage: 'English',
-            ),
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.all(15),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          backgroundColor: const Color(0xFFB8960A),
-          elevation: 5,
-        ),
-        child: Text(
-          'LOGIN',
-          style: GoogleFonts.syne(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 10),
+    width: double.infinity,
+    child: ElevatedButton(
+      onPressed: () => Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const HomeScreen(),
         ),
       ),
-    );
-  }
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        backgroundColor: const Color(0xFFB8960A),
+        elevation: 5,
+      ),
+      child: Text(
+        'LOGIN',
+        style: GoogleFonts.syne(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  );
+}
 
   Widget buildSignUpBtn() {
     return Center(

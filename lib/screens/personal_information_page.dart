@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_app/screens/auth_service.dart';
 
 class PersonalInformationPage extends StatefulWidget {
   const PersonalInformationPage({super.key});
@@ -28,16 +29,51 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
   late final TextEditingController _memberSinceController;
 
   @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController(text: 'Amine Lazar');
-    _emailController = TextEditingController(text: 'example@gmail.com');
-    _phoneController = TextEditingController(text: '0771234559');
-    _cityController = TextEditingController(text: 'Algiers');
-    _hometownController = TextEditingController(text: 'Oran');
-    _birthdayController = TextEditingController(text: '25 March');
-    _memberSinceController = TextEditingController(text: 'Jun 21, 2025');
-  }
+void initState() {
+  super.initState();
+
+  _nameController = TextEditingController();
+  _emailController = TextEditingController();
+  _phoneController = TextEditingController();
+  _cityController = TextEditingController();
+  _hometownController = TextEditingController();
+  _birthdayController = TextEditingController();
+  _memberSinceController = TextEditingController();
+
+  _loadUserData();
+}
+
+Future<void> _loadUserData() async {
+  final data = await AuthService().getUserData();
+
+  if (data == null || !mounted) return;
+
+  final firstName = (data['firstname'] ?? '').toString();
+  final lastName = (data['lastname'] ?? '').toString();
+
+  setState(() {
+    _nameController.text = '$firstName $lastName'.trim();
+    _emailController.text = (data['email'] ?? '').toString();
+    _phoneController.text = (data['phonenumber'] ?? '').toString();
+    _birthdayController.text = (data['date'] ?? '').toString();
+
+    _cityController.text = (data['city'] ?? '—').toString();
+    _hometownController.text = (data['hometown'] ?? '—').toString();
+
+    final createdAt = data['createdAt'];
+    if (createdAt != null) {
+      try {
+        final date = createdAt.toDate();
+        _memberSinceController.text =
+            '${date.day}/${date.month}/${date.year}';
+      } catch (_) {
+        _memberSinceController.text = '—';
+      }
+    } else {
+      _memberSinceController.text = '—';
+    }
+  });
+}
 
   @override
   void dispose() {
@@ -230,7 +266,16 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
                 child: _profileImage == null
                     ? Center(
                         child: Text(
-                          'AL',
+                          _nameController.text.isNotEmpty
+                        ? _nameController.text
+                          .trim()
+                          .split(' ')
+                          .where((e) => e.isNotEmpty)
+                          .map((e) => e[0])
+                          .take(2)
+                          .join()
+                          .toUpperCase()
+                          : '?',
                           style: GoogleFonts.syne(
                             color: Colors.white,
                             fontSize: 26,
